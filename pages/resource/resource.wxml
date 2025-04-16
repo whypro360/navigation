@@ -1,0 +1,40 @@
+<view class="location-container">
+  <view class="input-section">
+    <view class="label">点位名称：</view>
+    <input 
+      class="nickname-input" 
+      placeholder="请输入名称" 
+      bindinput="onInputName"
+    />
+  </view>
+
+  <button 
+    class="get-location-btn" 
+    bindtap="handleGetLocation"
+  >
+    <image src="/images/location_icon.png" class="btn-icon"/>获取当前位置
+  </button>
+
+  <view class="coordinates">
+    <view class="coordinate-item">纬度：{{latitude || '未获取'}}</view>
+    <view class="coordinate-item">经度：{{longitude || '未获取'}}</view>
+  </view>
+  <view class="input-section">
+    <view class="label">点位类型：</view>
+    <picker mode="selector" range="{{types}}" bindchange="onTypeChange">
+      <view class="picker">
+        {{selectedType || '请选择点位类型'}}
+      </view>
+    </picker>
+  </view>
+  <view class="input-section">
+    <view class="label">点位描述：</view>
+    <input 
+      class="nickname-input" 
+      placeholder="请输入点位描述信息" 
+      bindinput="onDescribe"
+    />
+  </view>
+
+  <button class="submit-btn" bindtap="submitData">确认上传</button>
+</view>

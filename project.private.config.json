@@ -9,6 +9,13 @@
     "miniprogram": {
       "list": [
         {
+          "name": "pages/resource/resource",
+          "pathName": "pages/resource/resource",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
           "name": "pages/my/my",
           "pathName": "pages/my/my",
           "query": "",

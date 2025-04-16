@@ -16,6 +16,13 @@
       </view>
       <view class="right">》</view>
     </button>
+    <button class="row" style="width: 100%;" bindtap="resourced">
+      <view class="left">
+        <icon class="icon-small" type="success" size="16"></icon>
+        <text class="text">提供点位资源</text>
+      </view>
+      <view class="right">》</view>
+    </button>
     <button class="row" style="width: 100%;" bindtap="feedbackClick">
       <view class="left">
         <icon class="icon-small" type="success" size="16"></icon>
