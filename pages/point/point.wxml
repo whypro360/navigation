@@ -1,4 +1,6 @@
+<!--pages/point/point.wxml-->
 <view class="location-container">
+  <!-- 点位名称输入 -->
   <view class="input-section">
     <view class="label">点位名称：</view>
     <input 
@@ -8,6 +10,7 @@
     />
   </view>
 
+  <!-- 获取当前位置按钮 -->
   <button 
     class="get-location-btn" 
     bindtap="handleGetLocation"
@@ -15,10 +18,13 @@
     <image src="/images/location_icon.png" class="btn-icon"/>获取当前位置
   </button>
 
+  <!-- 显示经纬度 -->
   <view class="coordinates">
     <view class="coordinate-item">纬度：{{latitude || '未获取'}}</view>
     <view class="coordinate-item">经度：{{longitude || '未获取'}}</view>
   </view>
+
+  <!-- 点位类型选择 -->
   <view class="input-section">
     <view class="label">点位类型：</view>
     <picker mode="selector" range="{{types}}" bindchange="onTypeChange">
@@ -27,6 +33,8 @@
       </view>
     </picker>
   </view>
+
+  <!-- 点位描述输入 -->
   <view class="input-section">
     <view class="label">点位描述：</view>
     <input 
@@ -36,5 +44,6 @@
     />
   </view>
 
+  <!-- 提交按钮 -->
   <button class="submit-btn" bindtap="submitData">确认上传</button>
 </view>

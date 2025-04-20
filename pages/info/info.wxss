@@ -1,1 +1,67 @@
-/* pages/info/info.wxss */
+/* 设置全局样式 */
+page {
+  background-color: #f0f4f8;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.card {
+  width: 90%;
+  max-width: 500px;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.section-header {
+  font-size: 24px;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.info-item text:first-child {
+  width: 80px;
+  font-weight: bold;
+}
+
+input, .picker {
+  flex-grow: 1;
+  padding: 10px;
+  margin-left: 10px;
+  border: none;
+  border-radius: 8px;
+  background-color: #f7f7f7;
+  font-size: 16px;
+}
+
+.update-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #00aaff;
+  color: white;
+  font-size: 18px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.update-btn:hover {
+  background-color: #008cc5;
+}

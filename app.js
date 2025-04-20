@@ -1,19 +1,61 @@
 // app.js
+const user = require("/utils/user.js");
+const { request } = require("/utils/request");
 App({
-  onLaunch() {
-    // 展示本地存储能力
-    const logs = wx.getStorageSync('logs') || []
-    logs.unshift(Date.now())
-    wx.setStorageSync('logs', logs)
+  // 修改 app.js 的 wxLogin 方法
+  wxLogin() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const loginRes = await new Promise((resolve, reject) => {
+          wx.login({
+            success: resolve,
+            fail: reject
+          });
+        });
 
-    // 登录
-    wx.login({
-      success: res => {
-        // 发送 res.code 到后台换取 openId, sessionKey, unionId
+        if (!loginRes.code) {
+          console.error('获取 code 失败:', loginRes.errMsg);
+          wx.showToast({
+            title: '登录失败，请重试',
+            icon: 'none'
+          });
+          reject(loginRes);
+          return;
+        }
+
+        console.log('临时登录凭证 code:', loginRes.code);
+        const serverRes = await request({
+          url: 'http://localhost:8080/user/user/login',
+          method: 'POST',
+          data: {
+            code: loginRes.code
+          }
+        });
+
+        console.log('服务器返回数据:', serverRes);
+        const userInfo = serverRes.data;
+        if (userInfo) {
+          user.setUserInfo(userInfo);
+          wx.showToast({
+            title: '登录成功',
+            icon: 'success'
+          });
+          resolve(userInfo); // 登录成功，返回 userInfo
+        } else {
+          wx.showToast({
+            title: '登录失败，请重试',
+            icon: 'none'
+          });
+          reject(new Error('Login failed'));
+        }
+      } catch (err) {
+        console.error('请求服务器失败:', err);
+        wx.showToast({
+          title: '网络错误，请检查连接',
+          icon: 'none'
+        });
+        reject(err);
       }
-    })
-  },
-  globalData: {
-    userInfo: null
+    });
   }
 })

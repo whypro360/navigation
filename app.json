@@ -1,10 +1,11 @@
 {
   "pages": [
-    "pages/index/index",
-    "pages/logs/logs",
+    "pages/map/map",
     "pages/my/my",
-    "pages/resource/resource",
-    "pages/info/info"
+    "pages/info/info",
+    "pages/point/point",
+    "pages/path/path",
+    "pages/search/search"
   ],
   "window": {
     "navigationBarTextStyle": "black",
@@ -17,7 +18,7 @@
     }
   },
   "requiredPrivateInfos": ["getLocation"],
-  "style": "v2",
+  
   "componentFramework": "glass-easel",
   "sitemapLocation": "sitemap.json",
   "lazyCodeLoading": "requiredComponents"

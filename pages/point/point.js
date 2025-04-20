@@ -5,9 +5,9 @@ Page({
     latitude: null,
     longitude: null,
     name: '',
-    describe: '', // 注意：这里应该是`describe`而不是`description`
-    types: [], // 存储点位类型的名称
-    typeMap: {}, // 存储点位类型的名称到ID的映射
+    describe: '', 
+    types: [], 
+    typeMap: {}, 
     selectedType: '',
     selectedTypeId: null // 存储选中的点位类型的ID
   },
@@ -16,37 +16,35 @@ Page({
     // 页面加载时获取点位类型
     this.fetchPointTypes();
  },
-// 获取点位类型
-async fetchPointTypes() {
-  try {
-    wx.showLoading({ title: '加载中...' });
-    const serverRes = await request({
-      url: 'http://localhost:8080/navigation/pointType',
-      method: 'GET',
-    });
+  // 获取点位类型
+  async fetchPointTypes() {
+    try {
+      wx.showLoading({ title: '加载中...' });
+      const serverRes = await request({
+        url: 'http://localhost:8080/navigation/pointType',
+        method: 'GET',
+      });
+      console.log('获取到的点位类型对象:', serverRes.data);
+      // 提取 typeName 并更新 types
+      const types = serverRes.data.map(item => item.typeName);
+      // 建立 typeName 到 id 的映射
+      const typeMap = serverRes.data.reduce((acc, item) => {
+        acc[item.typeName] = item.id;
+        return acc;
+      }, {});
 
-    console.log('获取到的点位类型对象:', serverRes.data);
+      this.setData({
+        types: types,
+        typeMap: typeMap,
+      });
 
-    // 提取 typeName 并更新 types
-    const types = serverRes.data.map(item => item.typeName);
-    // 建立 typeName 到 id 的映射
-    const typeMap = serverRes.data.reduce((acc, item) => {
-      acc[item.typeName] = item.id;
-      return acc;
-    }, {});
-
-    this.setData({
-      types: types,
-      typeMap: typeMap,
-    });
-
-    wx.hideLoading();
-  } catch (err) {
-    console.error('获取点位类型失败:', err);
-    wx.showToast({ title: '获取点位类型失败', icon: 'none' });
-    wx.hideLoading();
-  }
-},
+      wx.hideLoading();
+    } catch (err) {
+      console.error('获取点位类型失败:', err);
+      wx.showToast({ title: '获取点位类型失败', icon: 'none' });
+      wx.hideToast();
+    }
+  },
  
   // 下拉框选择事件
   onTypeChange(e) {
@@ -72,14 +70,12 @@ async fetchPointTypes() {
     wx.getSetting({
       success: (res) => {
         if (!res.authSetting['scope.userLocation']) {
-          // 第二步：未授权时请求授权[2,4](@ref)
           wx.authorize({
             scope: 'scope.userLocation',
             success: () => this._getActualLocation(),
             fail: () => this._showAuthGuide()
           });
         } else {
-          // 已授权直接获取位置
           this._getActualLocation();
         }
       }
@@ -89,12 +85,12 @@ async fetchPointTypes() {
   // 实际获取位置的方法
   _getActualLocation() {
     wx.getLocation({
-      type: 'gcj02', 
-      altitude: true, 
+      type: 'gcj02',
+      isHighAccuracy: true,
       success: (res) => {
         this.setData({
-          latitude: res.latitude.toFixed(6),
-          longitude: res.longitude.toFixed(6)
+          latitude: res.latitude,
+          longitude: res.longitude
         });
       },
       fail: (err) => {

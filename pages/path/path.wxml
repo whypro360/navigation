@@ -1,0 +1,51 @@
+<!-- pages/path/index.wxml -->
+<view class="container">
+  <!-- 头部标题 -->
+  <view class="header">
+    <text class="title">路线规划系统</text>
+    <text class="subtitle">请选择起点与连接点</text>
+  </view>
+
+  <!-- 地点选择区域 -->
+  <view class="form-card">
+    <view class="input-group">
+      <text class="input-label">开始地点</text>
+      <view class="picker" bindtap="chooseStartPoint">
+        <text class="placeholder">{{startPoint.name || "点击选择起点"}}</text>
+        <image src="/images/start.png" class="icon" />
+      </view>
+    </view>
+
+    <view class="input-group">
+      <text class="input-label">连接地点</text>
+      <picker bindchange="bindPickerChange" range="{{allPoints}}" range-key="name">
+        <view class="picker">
+          <text class="placeholder">{{connectPoint.name || "请选择连接点"}}</text>
+          <image src="/images/end.png" class="icon" />
+        </view>
+      </picker>
+    </view>
+  </view>
+
+  <!-- 地图预览 -->
+  <view class="map-preview" wx:if="{{startPoint.latitude && connectPoint.latitude}}">
+    <map 
+      id="routeMap"
+      latitude="{{mapCenter.latitude}}"
+      longitude="{{mapCenter.longitude}}"
+      scale="20"
+      markers="{{markers}}"
+      polyline="{{polyline}}"
+      show-location
+      class="map">
+    </map>
+  </view>
+
+  <!-- 上传按钮 -->
+  <view class="action-bar">
+    <button class="upload-btn" bindtap="handleUpload" hover-class="button-hover">
+      提交路线方案
+      <image src="/images/icon-upload.png" class="upload-icon" />
+    </button>
+  </view>
+</view>

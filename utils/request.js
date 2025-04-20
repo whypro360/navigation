@@ -17,7 +17,7 @@ function request(config) {
       },
       success: (res) => {
         if (res.statusCode === 200) {
-          console.log('请求头中的 token:', token);
+          // console.log('请求头中的 token:', token);
           resolve(res.data);
         } else {
           reject(res);

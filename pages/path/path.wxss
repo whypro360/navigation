@@ -1,0 +1,118 @@
+/* pages/path/path.wxss */
+/* pages/path/index.wxss */
+.container {
+  padding: 20rpx;
+  background: #f5f6fa;
+  min-height: 100vh;
+}
+
+.header {
+  padding: 40rpx 30rpx;
+}
+
+.title {
+  display: block;
+  font-size: 42rpx;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.subtitle {
+  font-size: 28rpx;
+  color: #7f8c8d;
+  margin-top: 15rpx;
+}
+
+.form-card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.05);
+}
+
+.input-group {
+  margin-bottom: 40rpx;
+}
+
+.input-label {
+  display: block;
+  color: #34495e;
+  font-size: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.picker {
+  height: 90rpx;
+  border: 2rpx solid #ecedef;
+  border-radius: 12rpx;
+  padding: 0 25rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.3s;
+}
+
+.picker:active {
+  background: #f8f9fb;
+}
+
+.placeholder {
+  color: #95a5a6;
+  font-size: 30rpx;
+}
+
+.icon {
+  width: 40rpx;
+  height: 40rpx;
+}
+
+.map-preview {
+  height: 500rpx;
+  width: 100%;
+  margin: 30rpx 0;
+  border-radius: 16rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.1);
+}
+
+.map {
+  width: 100%;
+  height: 100%;
+}
+
+.action-bar {
+  padding: 40rpx 0;
+}
+
+.upload-btn {
+  background: #3498db;
+  color: #fff;
+  height: 90rpx;
+  border-radius: 12rpx;
+  font-size: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upload-icon {
+  width: 36rpx;
+  height: 36rpx;
+  margin-left: 15rpx;
+}
+
+.button-hover {
+  opacity: 0.9;
+  transform: scale(0.98);
+}
+
+/* 新增下拉箭头样式 */
+.icon-arrow-down {
+  width: 28rpx;
+  height: 28rpx;
+  transition: transform 0.3s;
+}
+
+.picker:active .icon-arrow-down {
+  transform: rotate(180deg);
+}

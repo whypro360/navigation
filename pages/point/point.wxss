@@ -1,0 +1,109 @@
+/* pages/point/point.wxss */
+/* 整体容器样式 */
+.location-container {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  margin: 20px auto;
+}
+
+/* 输入区域样式 */
+.input-section {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.label {
+  font-size: 16px;
+  color: #333;
+  width: 80px;
+  font-weight: 500;
+}
+
+.nickname-input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  color: #555;
+  background-color: #fff;
+}
+
+.nickname-input::placeholder {
+  color: #aaa;
+}
+
+/* 按钮样式 */
+.get-location-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  font-size: 16px;
+  border-radius: 20px;
+  border: none;
+  margin-bottom: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.get-location-btn:hover {
+  background-color: #0056b3;
+}
+
+.btn-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+}
+
+/* 经纬度显示样式 */
+.coordinates {
+  margin-bottom: 15px;
+  font-size: 14px;
+  color: #666;
+}
+
+.coordinate-item {
+  margin-bottom: 5px;
+}
+
+/* 点位类型选择器样式 */
+.picker {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+  font-size: 14px;
+  color: #555;
+  text-align: center;
+  cursor: pointer;
+}
+
+.picker:hover {
+  background-color: #f0f0f0;
+}
+
+/* 提交按钮样式 */
+.submit-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background-color: #28a745;
+  color: #fff;
+  font-size: 16px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+  background-color: #218838;
+}

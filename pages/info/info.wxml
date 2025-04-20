@@ -1,2 +1,28 @@
-<!--pages/info/info.wxml-->
-<text>pages/info/info.wxml</text>
+<view class="container">
+  <view class="card">
+    <view class="section-header">个人信息</view>
+    <view class="info-item">
+      <text>OpenID:</text>
+      <text>{{userInfo.openid}}</text>
+    </view>
+    <view class="info-item">
+      <text>角色:</text>
+      <text>{{userInfo.role}}</text>
+    </view>
+    <view class="info-item">
+      <text>Name:</text>
+      <input type="text" placeholder="请输入姓名" value="{{userInfo.name}}" bindinput="onNameChange" />
+    </view>
+    <view class="info-item">
+      <text>Sex:</text>
+      <picker mode="selector" range="{{sexOptions}}" value="{{userInfo.sexIndex}}" bindchange="onSexChange">
+        <view class="picker">{{userInfo.sex}}</view>
+      </picker>
+    </view>
+    <view class="info-item">
+      <text>Phone:</text>
+      <input type="number" placeholder="请输入电话号码" value="{{userInfo.phone}}" bindinput="onPhoneChange" />
+    </view>
+    <button class="update-btn" bindtap="updateUserInfo">更新信息</button>
+  </view>
+</view>
