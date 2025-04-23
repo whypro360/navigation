@@ -1,4 +1,6 @@
 // pages/info/info.js
+const app = getApp();
+const user = require("../../utils/user.js");
 const { request } = require("../../utils/request");
 Page({
   data: {
@@ -20,13 +22,19 @@ Page({
     try{
       wx.showLoading({ title: '加载个人信息中...' });
       const serverRes = await request({
-        url: 'http://localhost:8080/user/user/getUserById',
+        url: app.globalData.URL+'user/user/getUserById',
         method:'GET'
       });
       console.log('获取到的个人信息：',serverRes.data);
       
-      const {openid ,name ,sex , phone, id, role} = serverRes.data
-
+      const {openid ,name ,sex , phone, id, role:originalRole} = serverRes.data
+      // 处理角色
+      let role;
+      if (originalRole == "0") {
+        role = "用户";
+      } else {
+        role = "管理员";
+      }
       this.setData({
         userInfo :{
           openid : openid,
@@ -51,8 +59,8 @@ Page({
   async updateUserInfo(){
     try{
       wx.showLoading({ title: '提交个人信息中...' });
-      const serverRes = await request({
-        url:"http://localhost:8080/user/user/updateUser",
+      await request({
+        url:app.globalData.URL+"user/user/updateUser",
         method:"POST",
         data:{
           id : this.data.userInfo.id,
@@ -62,6 +70,11 @@ Page({
         },
       });
       wx.showToast({ title: '上传成功' });
+      //修改user的name
+      user.setUserInfo({
+        ...this.data.userInfo, // 保留其他字段
+        name: this.data.userInfo.name // 更新 name 字段
+      });
     } catch (err) {
       console.error('提交个人信息失败:', err);
       wx.showToast({ title: '提交个人信息失败', icon: 'none' });

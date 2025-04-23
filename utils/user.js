@@ -1,6 +1,4 @@
 // user.js
-const app = getApp();
-
 // 获取用户信息
 function getUserInfo() {
   return wx.getStorageSync('userInfo') || null;

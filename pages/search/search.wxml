@@ -1,8 +1,0 @@
-<map 
-  id="myMap"
-  longitude="{{longitude}}"
-  latitude="{{latitude}}"
-  scale="{{scale}}"
-  polylines="{{polyline}}"
-  class="map-container"
-></map>

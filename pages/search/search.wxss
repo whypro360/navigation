@@ -1,5 +1,0 @@
-/* pages/search/search.wxss */
-.map-container {
-  width: 100%;
-  height: 100vh; /* 占满整个视口高度 */
-}

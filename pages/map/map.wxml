@@ -1,34 +1,7 @@
 <!-- pages/map/map.wxml -->
 <!-- 地图容器 -->
 <view class="container">
-  <!-- 地图主体 -->
-  <map 
-    id="myMap"
-    longitude="{{longitude}}"
-    latitude="{{latitude}}"
-    scale="{{scale}}"
-    polylines="{{polyline}}"
-    markers="{{markers}}"
-    include-points="{{includePoints}}"
-    bindmarkertap="handleMarkerTap"
-    show-location
-    class="map-container"
-  ></map>
-  <!-- 地图控制按钮 -->
-  <view class="control-group">
-    <view class="control-btn" bindtap="zoomIn">
-      <image src="/images/zoom-in.png" class="control-icon"/>
-    </view>
-    <view class="control-btn" bindtap="zoomOut">
-      <image src="/images/zoom-out.png" class="control-icon"/>
-    </view>
-    <view class="control-btn" bindtap="switchLayer">
-      <image src="/images/layer-switch.png" class="control-icon"/>
-    </view>
-  </view>
-
-
-    <!-- 资源类型选择 -->
+  <!-- 资源类型选择 -->
   <scroll-view scroll-x class="resource-scroll" enable-flex>
     <view 
       wx:for="{{resourceTypes}}" 
@@ -50,6 +23,34 @@
     />
     <image src="/images/search-icon.png" class="search-images"></image>
   </view>
+  <!-- 地图主体 -->
+  <map 
+    id="myMap"
+    longitude="{{longitude}}"
+    latitude="{{latitude}}"
+    scale="{{scale}}"
+    polyline="{{polyline}}"
+    markers="{{markers}}"
+    include-points="{{includePoints}}"
+    bindmarkertap="handleMarkerTap"
+    show-location
+    class="map-container"
+  ></map>
+  <!-- 地图控制按钮 -->
+  <view class="control-group">
+    <view class="control-btn" bindtap="zoomIn">
+      <image src="/images/zoom-in.png" class="control-icon"/>
+    </view>
+    <view class="control-btn" bindtap="zoomOut">
+      <image src="/images/zoom-out.png" class="control-icon"/>
+    </view>
+    <view class="control-btn" bindtap="switchLayer">
+      <image src="/images/layer-switch.png" class="control-icon"/>
+    </view>
+  </view>
+
+
+
 </view>
 
 <!-- 自定义导航确认弹窗 -->

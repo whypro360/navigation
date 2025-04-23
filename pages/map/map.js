@@ -1,14 +1,17 @@
 const app = getApp();
 const user = require("../../utils/user.js");
 const { request } = require("../../utils/request");
+const { calculateDistance } = require("../../utils/distanceUtils")
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    longitude:0,
-    latitude:0,
+    userLocation:{
+      longitude:0,
+      latitude:0,
+    },//用户当前位置
     scale:18,
     polyline:[],
     markers:[],
@@ -17,23 +20,30 @@ Page({
     activeTypeId: null, // 当前选中的资源类型ID
     showDialog: false, // 是否显示导航确认弹窗
     selectedLocation: null, // 当前选中的地点信息
+    destination: null, // 目的地坐标
+    isNavigating: false,
+    updateInterval: null,
+    lastUpdateTime: 0,
+    arrivalCount: 0 
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    this.initLocal();
     this.fetchType();
+    this.initLocal();// 获取用户位置
   },
   initLocal() {
     wx.getLocation({
-      type: "wgs84",
+      type: 'gcj02',
       isHighAccuracy: true,
       success: (res) => { // 使用箭头函数
         this.setData({
-          latitude: res.latitude,
-          longitude: res.longitude,
+          userLocation:{
+            latitude: res.latitude,
+            longitude: res.longitude,
+          }
         });
       },
       fail: (err) => {
@@ -52,7 +62,7 @@ Page({
   async fetchType() {
     try {
       const serverRes = await request({
-        url: "http://localhost:8080/navigation/pointType",
+        url: app.globalData.URL+"navigation/pointType",
         method: "GET",
       });
       console.log("返回点位类型:", serverRes.data);
@@ -110,7 +120,7 @@ Page({
   
       // 请求标记点数据
       const serverRes = await request({
-        url: `http://localhost:8080/navigation/point_pointType?Id=${typeId}`,
+        url: app.globalData.URL+`navigation/point_pointType?Id=${typeId}`,
         method: "GET",
       });
   
@@ -135,14 +145,15 @@ Page({
         height: 30, // 图标高度（单位：px）
         image: item.imageUrl || '/images/default-location.png', // 地点图片
       }));
-  
       // 更新页面数据
       this.setData({
+        // polyline,
         markers,
         includePoints: markers.map(marker => ({
           latitude: marker.latitude,
           longitude: marker.longitude,
-        })),
+          })
+        ),
       });
   
     } catch (error) {
@@ -210,14 +221,14 @@ Page({
   async startNavigation() {
     try {
       const { latitude, longitude } = this.data.selectedLocation;
-  
+
       // 请求导航路线数据
       const serverRes = await request({
-        url: "http://localhost:8080/navigation/navigation",
+        url: app.globalData.URL+"navigation/navigation",
         method: "POST",
         data: {
-          startLat: this.data.latitude,
-          startLng: this.data.longitude,
+          startLat: this.data.userLocation.latitude,
+          startLng: this.data.userLocation.longitude,
           endLat: latitude,
           endLng: longitude,
         },
@@ -226,43 +237,22 @@ Page({
       console.log("返回导航路线数据:", serverRes);
   
       if (serverRes.code === 1 && serverRes.data) {
-        const routePoints = serverRes.data.map(point => ({
-          latitude: point.lat, // 假设返回数据中包含 lat 和 lng 字段
-          longitude: point.lng,
-        }));
-  
-        // 设置导航路线的 polyline 数据
-        const polyline = [{
-          points: routePoints,
-          color: "#FF0000", // 路线颜色
-          width: 6, // 路线宽度
-          dottedLine: false, // 是否虚线
-        }];
-  
-        // 更新页面数据
+        this.updateRoute(serverRes.data); // 更新初始路线
+        // 存储目的地坐标
         this.setData({
-          showDialog: false,
-          selectedLocation: null,
-          polyline: polyline, // 地图上的导航路线
-          markers: [
-            {
-              id: 1,
-              latitude: this.data.latitude,
-              longitude: this.data.longitude,
-              iconPath: "/images/start.png", // 起点图标
-              width: 30,
-              height: 30,
-            },
-            {
-              id: 2,
-              latitude: latitude,
-              longitude: longitude,
-              iconPath: "/images/end.png", // 终点图标
-              width: 30,
-              height: 30,
-            },
-          ],
+          destination: { latitude, longitude },
+          isNavigating: true
         });
+        // 清除已有定时器
+        if (this.data.updateInterval) {
+          clearInterval(this.data.updateInterval);
+        }
+        // 启动定时更新
+        const intervalId = setInterval(() => {
+          this.updateLocationAndRoute();
+        }, 1000);
+        
+        this.setData({ updateInterval: intervalId });
       } else {
         console.error("导航数据获取失败");
         wx.showToast({
@@ -279,7 +269,171 @@ Page({
     }
   },
 
+    /**
+   * 更新定位和路线
+   */
+  async updateLocationAndRoute() {
+    try {
+      const authStatus = await wx.getSetting({});
+      if (!authStatus.authSetting['scope.userLocation']) {
+          wx.showToast({ title: '请开启定位权限', icon: 'none' });
+          return;
+      }
+      // 获取最新位置
+      const location = await new Promise((resolve, reject) => {
+        wx.getLocation({
+          type: 'gcj02',
+          isHighAccuracy: true,
+          success: resolve,
+          fail: (err) => {
+            wx.showToast({ title: `定位失败:${err.errMsg}`, icon: 'none' });
+            reject(err);
+          }
+        });
+      });
+
+      // 更新用户位置
+      this.setData({
+        userLocation: {
+          latitude: location.latitude,
+          longitude: location.longitude
+        }
+      });
+
+      // 到达判断
+      const distance = this.calculateDistance(
+        location.latitude,
+        location.longitude,
+        this.data.destination.latitude,
+        this.data.destination.longitude
+      );
+      if(distance <= 2){
+          this.data.arrivalCount++;
+          if(this.data.arrivalCount >= 3){
+              wx.showToast({ title: '已到达目的地', icon: 'success' });
+              return this.stopNavigation();
+          }
+      } else {
+          this.setData({ arrivalCount: 0 });
+      }
+      // 频率控制
+      if(Date.now() - this.data.lastUpdateTime < 1000) return;
+      // 请求路线更新
+      const serverRes = await request({
+        url: app.globalData.URL + "navigation/update",
+        method: "POST",
+        data: {
+          currentLat: location.latitude,
+          currentLng: location.longitude,
+          endLat: this.data.destination.latitude,
+          endLng: this.data.destination.longitude
+        }
+      });
+
+      if (serverRes.code === 1 && serverRes.data) {
+        const newRoute = serverRes.data;
+        // 对比路线差异
+        if (!this.isSameRoute(newRoute)) {
+          this.updateRoute(newRoute);
+        }
+      } else {
+        wx.showToast({ title: '路线更新失败', icon: 'none' });
+    }
+    this.setData({ lastUpdateTime: Date.now() });
+    } catch (error) {
+      console.error('定位更新失败:', error);
+    }
+  },
+
   /**
+   * 路线对比
+   */
+  isSameRoute(newRouteData) {
+    const oldPoints = this.data.polyline[0]?.points || [];
+    const newPoints = newRouteData.map(p => ({
+      latitude: p.endLatitude,
+      longitude: p.endLongitude
+    }));
+    
+    return JSON.stringify(oldPoints) === JSON.stringify(newPoints);
+  },
+
+  /**
+   * 结束导航
+   */
+  stopNavigation() {
+    if (this.data.updateInterval) {
+      clearInterval(this.data.updateInterval);
+      this.setData({
+        updateInterval: null,
+        isNavigating: false,
+        polyline: [],
+        markers: [],
+        destination: null
+      });
+      wx.showToast({
+        title: '导航已结束',
+        icon: 'success'
+      });
+    }
+  },
+
+  /**
+   * 更新路线
+   */
+  updateRoute(routeData) {
+    const routePoints = routeData.map(point => ({
+      latitude: point.endLatitude,
+      longitude: point.endLongitude,
+    }));
+
+    const polyline = [{
+      points: routePoints,
+      color: "#FF0000", // 路线颜色
+      width: 6, // 路线宽度
+      dottedLine: false, // 是否虚线
+    }];
+    this.setData({
+      showDialog:false,
+      selectedLocation:null,
+      polyline: polyline,
+      markers: [
+        {
+          id: 1,
+          latitude: this.data.userLocation.latitude,
+          longitude: this.data.userLocation.longitude,
+          iconPath: "/images/start.png", // 起点图标
+          width: 30,
+          height: 30,
+        },
+        {
+          id: 2,
+          latitude: routePoints[routePoints.length - 1].latitude,
+          longitude: routePoints[routePoints.length - 1].longitude,
+          iconPath: "/images/end.png", // 终点图标
+          width: 30,
+          height: 30,
+        },
+      ],
+    });
+  },
+
+
+  calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371e3; // 地球半径，单位米
+    const φ1 = lat1 * Math.PI / 180;
+    const φ2 = lat2 * Math.PI / 180;
+    const Δφ = (lat2 - lat1) * Math.PI / 180;
+    const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c; // 返回距离，单位米
+  },
+    /**
    * 跳转到搜索页面
    */
   ToSearch() {
@@ -287,4 +441,14 @@ Page({
       url: "/pages/search/search",
     });
   },
+  /**
+   * 页面卸载时关闭 WebSocket
+   */
+  onUnload() {
+    if (this.data.websocket) {
+      this.data.websocket.close();
+    }
+  },
+
+
 })

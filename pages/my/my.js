@@ -77,7 +77,7 @@ Page({
       try {
         // 使用 wx.uploadFile 上传文件
         const uploadTask = await request({
-          url: 'http://localhost:8080/upload',
+          url: app.globalData.URL+'upload',
           filePath: compressRes.tempFilePath,
           method :"POST",
           name: 'file', 
@@ -121,7 +121,7 @@ Page({
 
   async logout(){
     const serverRes = await request({
-      url : "http://localhost:8080/user/user/logout",
+      url : app.globalData.URL+"user/user/logout",
       method: "POST"
     })
     console.log("退出登录信息：",serverRes.data)

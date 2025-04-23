@@ -1,3 +1,4 @@
+const app = getApp();
 const { request } = require("../../utils/request")
 const EARTH_RADIUS = 6371; // 地球半径（千米）
 // pages/path/index.js
@@ -22,7 +23,7 @@ Page({
         title: '加载中...'
       })
       const serverRes =await request({
-        url:"http://localhost:8080/navigation/all_point",
+        url:app.globalData.URL+"navigation/all_point",
         method:"GET"
       });
       console.log("获取到的所有点位对象：",serverRes.data);
@@ -153,7 +154,7 @@ Page({
     wx.showLoading({ title: '上传中...' });
     try {
       await request({
-        url:"http://localhost:8080/navigation/path",
+        url:app.globalData.URL+"navigation/path",
         method:"POST",
         data:{
           startPointName:this.data.startPoint.name,

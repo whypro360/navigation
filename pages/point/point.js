@@ -1,3 +1,4 @@
+const app = getApp();
 const { request } = require("../../utils/request");
 
 Page({
@@ -21,7 +22,7 @@ Page({
     try {
       wx.showLoading({ title: '加载中...' });
       const serverRes = await request({
-        url: 'http://localhost:8080/navigation/pointType',
+        url: app.globalData.URL+'navigation/pointType',
         method: 'GET',
       });
       console.log('获取到的点位类型对象:', serverRes.data);
@@ -134,7 +135,7 @@ Page({
     try {
       // 使用封装的 request 方法
       await request({
-        url: 'http://localhost:8080/navigation/point',
+        url: app.globalData.URL+'navigation/point',
         method: 'POST',
         data: {
           name: this.data.name,
