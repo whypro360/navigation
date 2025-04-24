@@ -1,30 +1,62 @@
-<!-- pages/map/map.wxml -->
-<!-- 地图容器 -->
-<view class="container">
-  <!-- 资源类型选择 -->
-  <scroll-view scroll-x class="resource-scroll" enable-flex>
-    <view 
-      wx:for="{{resourceTypes}}" 
-      wx:key="id"
-      class="resource-item {{activeTypeId === item.id ? 'active' : ''}}"
-      bindtap="switchResource"
-      data-id="{{item.id}}"
-    >
-      <image src="{{item.icon}}" class="resource-icon"/>
-      <text>{{item.typeName}}</text>
+<!-- 1. 用户信息部分、搜索框部分、资源类型选择部分 -->
+<view wx:if="{{!isNavigating}}" class="top-section">
+  <!-- 1.1 用户信息部分 -->
+  <view class="user-section">
+    <view class="user-profile" bind:tap="ToMy">
+      <button class="avatar-btn">
+        <image src="{{userInfo.avatar}}" mode="aspectFill" />
+      </button>
+      <view class="name">{{userInfo.name}}</view>
     </view>
-  </scroll-view>
-    <!-- 搜索框 -->
-  <view class="search-box">
-    <input 
-      placeholder="请输入搜索地点" 
-      bind:tap="ToSearch" 
-      class="search-input"
-    />
-    <image src="/images/search-icon.png" class="search-images"></image>
+    <!-- 校区切换 -->
+    <view class="campus-selector">
+      <picker bindchange="bindCampusChange" value="{{campusIndex}}" range="{{campusesType}}" range-key="name">
+        <view class="picker-content">
+          <image src="/images/location.png" class="location-icon" />
+          <text class="campus-name">{{campusesType[campusIndex].name}}</text>
+          <image src="/images/arrow-down.png" class="arrow-icon" />
+        </view>
+      </picker>
+    </view>
   </view>
-  <!-- 地图主体 -->
-  <map 
+
+  <!-- 1.2 搜索框部分 -->
+  <view class="search-section">
+    <view class="search-box">
+      <input placeholder="请输入搜索地点" bind:tap="ToSearch" class="search-input" data-type="end" />
+      <image src="/images/search-icon.png" class="search-icon" />
+    </view>
+  </view>
+
+  <!-- 1.3 资源类型选择部分 -->
+  <view class="resources-section">
+    <scroll-view scroll-x class="resource-scroll" enable-flex>
+      <view wx:for="{{resourceTypes}}" wx:key="id" class="resource-item {{activeTypeId === item.id ? 'active' : ''}}" bindtap="switchResource" data-id="{{item.id}}">
+        <image src="{{item.icon}}" class="resource-icon" />
+        <text>{{item.typeName}}</text>
+      </view>
+    </scroll-view>
+  </view>
+</view>
+<!-- 2. 导航信息显示部分 -->
+<view wx:if="{{isNavigating && !navigationStarted }}" class="navigation-info-container">
+  <view class="navigation-info">
+    <view class="location-item start-location" bind:tap="ToSearch" data-type="start">
+      <image src="/images/start.png" class="location-icon" />
+      <text class="location-text">{{start.name}}</text>
+    </view>
+    <view class="location-arrow">
+      <image src="/images/arrow-right.png" class="arrow-icon" />
+    </view>
+    <view class="location-item end-location" bind:tap="ToSearch" data-type="end">
+      <image src="/images/end.png" class="location-icon" />
+      <text class="location-text">{{end.name}}</text>
+    </view>
+  </view>
+</view>
+<!-- 3. 地图部分 -->
+<view class="map-section">
+  <map
     id="myMap"
     longitude="{{longitude}}"
     latitude="{{latitude}}"
@@ -39,40 +71,36 @@
   <!-- 地图控制按钮 -->
   <view class="control-group">
     <view class="control-btn" bindtap="zoomIn">
-      <image src="/images/zoom-in.png" class="control-icon"/>
+      <image src="/images/zoom-in.png" class="control-icon" />
     </view>
     <view class="control-btn" bindtap="zoomOut">
-      <image src="/images/zoom-out.png" class="control-icon"/>
+      <image src="/images/zoom-out.png" class="control-icon" />
     </view>
     <view class="control-btn" bindtap="switchLayer">
-      <image src="/images/layer-switch.png" class="control-icon"/>
+      <image src="/images/layer-switch.png" class="control-icon" />
     </view>
   </view>
-
-
-
+    <!-- 导航按钮组 -->
+  <view class="navigation-btn-group" wx:if="{{isNavigating}}">
+    <button bindtap="startNavigation_1" class="btn btn-start" wx:if="{{!navigationStarted}}">开始导航</button>
+    <button bindtap="stopNavigation" class="btn btn-end" wx:if="{{navigationStarted}}">结束导航</button>
+    <button bindtap="backToMain" class="btn btn-back" wx:if="{{!navigationStarted}}">返回</button>
+  </view>
 </view>
 
 <!-- 自定义导航确认弹窗 -->
 <view wx:if="{{showDialog}}" class="custom-dialog-mask">
   <view class="custom-dialog">
-    <!-- 弹窗标题 -->
     <text class="dialog-title">导航确认</text>
-    <!-- 弹窗内容 -->
     <view class="dialog-content">
-      <!-- 添加在这里↓↓↓ -->
       <view wx:if="{{selectedLocation && selectedLocation.image}}" class="location-image-container">
         <image src="{{selectedLocation.image}}" class="location-image" mode="aspectFill" />
       </view>
-      <!-- 添加在这里↑↑↑ -->
-
       <text class="dialog-text">
         是否导航到{{selectedLocation && selectedLocation.callout.content}}？
       </text>
       <text class="location-hint">（{{selectedLocation && selectedLocation.description}}）</text>
     </view>
-
-    <!-- 操作按钮 -->
     <view class="dialog-actions">
       <text class="btn-cancel" bindtap="cancelNavigation">取消</text>
       <text class="btn-confirm" bindtap="startNavigation">确认</text>

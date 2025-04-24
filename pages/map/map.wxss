@@ -1,92 +1,243 @@
-/* pages/map/map.wxss */
-/* 容器布局 */
-.container {
+/* 整体布局调整 */
+.page-container {
+  display: flex;
+  flex-direction: column;
   height: 100vh;
-  width: 100%;
-  position: relative;
+  overflow: hidden;
 }
 
+.top-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
 
-/* 搜索框样式 */
-.search-box {
-  position: fixed;
+/* 1. 用户信息部分 */
+.user-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 30rpx;
+  background: linear-gradient(90deg, #f8f9fa 0%, #ffffff 100%);
+  /* box-shadow: 0 4rpx 12rpx rgba(221, 12, 12, 0.05); */
+}
+
+.user-profile {
   display: flex;
   align-items: center;
-  top: 20rpx;
-  left: 5%;
-  width: 90%;
-  z-index: 999;
-  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.1);
+}
+
+.avatar-btn image{
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+
+}
+.name {
+  font-size: 32rpx;
+  color: #2c3e50;
+  max-width: 200rpx;
+  padding: 10rpx 20rpx;
+  border-bottom: 2rpx solid transparent;
+  transition: all 0.3s;
+}
+
+.campus-selector {
+  background: rgba(0, 122, 255, 0.1);
+  border-radius: 40rpx;
+  padding: 12rpx 24rpx;
+}
+
+.picker-content {
+  display: flex;
+  align-items: center;
+}
+
+.location-icon {
+  width: 36rpx;
+  height: 36rpx;
+  margin-right: 10rpx;
+}
+
+.campus-name {
+  font-size: 28rpx;
+  color: #007AFF;
+  font-weight: 500;
+}
+
+.arrow-icon {
+  width: 24rpx;
+  height: 24rpx;
+  margin-left: 10rpx;
+  transition: transform 0.3s;
+}
+
+.picker-content:active .arrow-icon {
+  transform: rotate(180deg);
+}
+
+/* 2. 搜索框部分 */
+.search-section {
+  padding: 20rpx 30rpx;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
   border-radius: 40rpx;
   background: #fff;
-}
-.search-input {
-  padding: 20rpx 30rpx;
-  font-size: 28rpx;
+  padding: 10rpx 20rpx;
 }
 
-/* 搜索图标容器 */
-.search-images {
-  /* 基础尺寸 */
+.search-input {
+  font-size: 28rpx;
+  flex: 1;
+}
+
+.search-icon {
   width: 40rpx;
   height: 40rpx;
-  
-  /* 定位技巧 */
-  position: absolute;
-  right: 20rpx;
-  top: 50%;
-  transform: translateY(-50%);
-  
-  /* 图标适配优化 */
-  object-fit: contain;
-  vertical-align: middle;
-  
-  /* 交互优化 */
-  pointer-events: none; /* 避免图标遮挡输入框点击事件 */
+  margin-left: 20rpx;
 }
 
-/* 资源类型滚动条 */
-.resource-scroll {
-  position: fixed;
-  top: 120rpx;
-  white-space: nowrap;
-  padding: 20rpx;
-  z-index: 999;
-  background: rgba(255,255,255,0.9);
-  width: 100%;           /* 占满父容器 */
-  white-space: nowrap;   /* 强制横向排列 */
-  padding: 20rpx 0;      /* 上下留白 */
+/* 3. 资源类型选择部分 */
+.resources-section {
+  padding: 20rpx 30rpx;
+  background: rgba(255, 255, 255, 0.9);
 }
+
+.resource-scroll {
+  white-space: nowrap;
+  padding: 10rpx 0;
+}
+
 .resource-item {
   display: inline-flex;
   align-items: center;
-  flex-direction: row;  
   margin-right: 40rpx;
   padding: 15rpx;
   border-radius: 16rpx;
   background: #f5f5f5;
- 
 }
+
 .resource-icon {
   width: 40rpx;
   height: 40rpx;
-  object-fit: contain;  
-  transition: transform 0.3s ease;
-  margin-right: 10rpx;   
+  margin-right: 10rpx;
 }
+
 .resource-item text {
-  font-size: 28rpx;      
+  font-size: 28rpx;
   line-height: 1.5;
 }
+
 .resource-item.active {
   background: #007AFF;
   color: white;
   padding: 12rpx 24rpx;
-  border-radius: 40rpx;  
-  transform: scale(0.9); 
+  border-radius: 40rpx;
 }
 
-/* 地图容器 */
+/* 4. 导航信息显示部分 */
+/* 2. 导航信息显示部分 */
+.navigation-info-container {
+  position: relative;
+  padding-bottom: 100rpx; /* 为按钮预留空间 */
+  background-color: #ffffff;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+}
+
+.navigation-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx;
+}
+
+.location-item {
+  display: flex;
+  align-items: center;
+  background-color: #f5f7fa;
+  border-radius: 8rpx;
+  padding: 10rpx 20rpx;
+  width: 45%;
+}
+
+.location-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 10rpx;
+}
+
+.start-location .location-icon {
+  background-color: #e6f7ff;
+}
+
+.end-location .location-icon {
+  background-color: #fff2e6;
+}
+
+.location-text {
+  font-size: 28rpx;
+  color: #333333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.location-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.arrow-icon {
+  width: 36rpx;
+  height: 36rpx;
+}
+
+.btn-group {
+  position: absolute;
+  bottom: 30rpx;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 20rpx;
+  padding: 0 30rpx;
+}
+
+.btn {
+  flex: 1;
+  padding: 15rpx 0;
+  border-radius: 40rpx;
+  text-align: center;
+  font-size: 28rpx;
+  max-width: 200rpx;
+}
+
+.btn-start {
+  background-color: #007AFF;
+  color: white;
+}
+
+.btn-end {
+  background-color: #FF5A5F;
+  color: white;
+}
+
+.btn-back {
+  background-color: #f0f0f0;
+  color: #666;
+}
+/* 5. 地图部分 */
+.map-section {
+  flex: 1;
+  height: calc(100vh - 400rpx);
+}
+
 .map-container {
   width: 100%;
   height: 100%;
@@ -99,22 +250,23 @@
   bottom: 120rpx;
   z-index: 999;
 }
+
 .control-btn {
   width: 80rpx;
   height: 80rpx;
   background: #fff;
   border-radius: 50%;
   margin-bottom: 30rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.15);
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 .control-icon {
   width: 50rpx;
   height: 50rpx;
 }
-
 
 /* 自定义弹窗样式 */
 .custom-dialog-mask {
@@ -123,7 +275,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -148,8 +300,6 @@
   font-size: 28rpx;
   color: #666;
   margin-bottom: 48rpx;
-  /* display: flex;
-  justify-content: center; */
 }
 
 .location-hint {
@@ -165,7 +315,8 @@
   gap: 48rpx;
 }
 
-.btn-cancel, .btn-confirm {
+.btn-cancel,
+.btn-confirm {
   padding: 16rpx 32rpx;
   border-radius: 8rpx;
   font-size: 28rpx;
@@ -178,7 +329,7 @@
 
 .btn-confirm {
   color: #fff;
-  background: #e64340; /* 红色按钮 */
+  background: #e64340;
 }
 
 /* 新增图片样式 */

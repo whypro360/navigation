@@ -26,6 +26,18 @@ Page({
     }
   },
 
+  onShow(){
+    if (user.isLoggedIn()) {
+      const userInfo = user.getUserInfo();
+      this.setData({
+        login: {
+          avatar: userInfo.avatar,
+          name: userInfo.name
+        }
+      });
+    }
+  },
+
   async login(e) {
     if (user.isLoggedIn()) {
       console.log("点击修改头像");
@@ -47,6 +59,7 @@ Page({
 
   async uploadAvatar() {
     try {
+      // 选择图片
       const { tempFiles } = await new Promise((resolve, reject) => {
         wx.chooseMedia({
           count: 1,
@@ -73,43 +86,41 @@ Page({
           fail: reject
         });
       });
-  
-      try {
-        // 使用 wx.uploadFile 上传文件
-        const uploadTask = await request({
-          url: app.globalData.URL+'upload',
-          filePath: compressRes.tempFilePath,
-          method :"POST",
-          name: 'file', 
-          formData: {
-            userId: user.getUserInfo().id
-          },
-          success: (res) => {
-            const result = JSON.parse(res.data);
-            if (result.code === 200) {
-              const newUserInfo = { ...user.getUserInfo(), avatar: result.data };
-              user.setUserInfo(newUserInfo);
-              this.setData({ 'login.avatar': result.data });
-              wx.showToast({ title: '上传成功', icon: 'success' });
-            } else {
-              wx.showToast({ title: result.message || '上传失败', icon: 'none' });
-            }
-          },
-          fail: (err) => {
-            console.error('上传失败:', err);
-            wx.showToast({ title: '上传失败，请重试', icon: 'none' });
+      console.log("this is a user_token",user.getUserInfo().token )
+      // 上传图片到服务器
+      const uploadTask = wx.uploadFile({
+        url: app.globalData.URL + 'upload',
+        filePath: compressRes.tempFilePath,
+        name: 'file', // 文件字段名，必须与后端接口一致
+        header: {
+          'user_token': user.getUserInfo().token // 添加 user_token 到请求头
+        },
+        formData: {
+          userId: user.getUserInfo().id // 其他表单数据
+        },
+        success: (res) => {
+          const result = JSON.parse(res.data);
+          console.log("this is a result:",result)
+          if (result.code === 1) {
+            // 更新用户头像
+            const newUserInfo = { ...user.getUserInfo(), avatar: result.data };
+            user.setUserInfo(newUserInfo);
+            this.setData({ 'login.avatar': result.data });
+            wx.showToast({ title: '上传成功', icon: 'success' });
+          } else {
+            wx.showToast({ title: result.message || '上传失败', icon: 'none' });
           }
-        });
+        },
+        fail: (err) => {
+          console.error('上传失败:', err);
+          wx.showToast({ title: '上传失败，请重试', icon: 'none' });
+        }
+      });
   
-        // 监听上传进度
-        uploadTask.onProgressUpdate((res) => {
-          console.log(`上传进度：${res.progress}%`);
-        });
-  
-      } catch (err) {
-        console.error('上传失败:', err);
-        wx.showToast({ title: '上传失败，请重试', icon: 'none' });
-      }
+      // 监听上传进度
+      uploadTask.onProgressUpdate((res) => {
+        console.log(`上传进度：${res.progress}%`);
+      });
   
     } catch (err) {
       console.error('选择图片失败:', err);
@@ -118,7 +129,7 @@ Page({
       wx.hideLoading();
     }
   },
-
+  
   async logout(){
     const serverRes = await request({
       url : app.globalData.URL+"user/user/logout",

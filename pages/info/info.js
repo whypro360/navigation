@@ -70,10 +70,13 @@ Page({
         },
       });
       wx.showToast({ title: '上传成功' });
-      //修改user的name
+      const userIn = user.getUserInfo()
       user.setUserInfo({
-        ...this.data.userInfo, // 保留其他字段
-        name: this.data.userInfo.name // 更新 name 字段
+        id :userIn.id,
+        name: this.data.userInfo.name ,
+        openid:userIn.openid,
+        token:userIn.token,
+        avatar:userIn.avatar
       });
     } catch (err) {
       console.error('提交个人信息失败:', err);

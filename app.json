@@ -4,7 +4,8 @@
     "pages/my/my",
     "pages/info/info",
     "pages/point/point",
-    "pages/path/path"
+    "pages/path/path",
+    "pages/search/search"
 
   ],
   "window": {

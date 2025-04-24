@@ -1,0 +1,65 @@
+<!-- index.wxml -->
+<view class="container">
+  <!-- 搜索框 -->
+  <view class="search-box">
+    <image src="/images/search-icon.png" class="search-icon"></image>
+    <input 
+      class="search-input" 
+      placeholder="请输入地点名称" 
+      value="{{searchKeyword}}" 
+      bindinput="handleSearchInput" 
+    />
+    <image 
+      wx:if="{{searchKeyword}}" 
+      src="/images/clear.png" 
+      class="clear-button" 
+      bindtap="clearSearchInput"
+    ></image>
+  </view>
+
+  <!-- 最近查找记录 -->
+  <view 
+    wx:if="{{searchHistory.length > 0 && !searchResults.length}}" 
+    class="search-content"
+  >
+    <view class="section-header">
+      <text>最近查找</text>
+      <image 
+        src="/images/delete.png" 
+        class="clear-history-button" 
+        bindtap="clearSearchHistory"
+      ></image>
+    </view>
+    <view class="history-list">
+      <block wx:for="{{searchHistory}}" wx:key="id">
+        <view class="history-item" bindtap="selectLocation" data-location="{{item}}">
+          <image src="/images/location.png" class="history-icon"></image>
+          <text>{{item.name}}</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 搜索结果 -->
+  <view 
+    wx:if="{{searchResults.length > 0}}" 
+    class="search-content"
+  >
+    <view class="result-list">
+      <block wx:for="{{searchResults}}" wx:key="id">
+        <view class="result-item" bindtap="selectLocation" data-location="{{item}}">
+          <text class="result-title">{{item.name}}</text>
+          <text class="result-description">{{item.description}}</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 无结果提示 -->
+  <view 
+    wx:if="{{searchKeyword && !searchResults.length}}" 
+    class="search-content no-results"
+  >
+    <text>未找到相关点位，请尝试其他关键词。</text>
+  </view>
+</view>

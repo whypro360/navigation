@@ -1,13 +1,18 @@
 const app = getApp();
 const user = require("../../utils/user.js");
 const { request } = require("../../utils/request");
-const { calculateDistance } = require("../../utils/distanceUtils")
-Page({
+const { calculateDistance } = require("../../utils/distanceUtils");
 
+
+Page({
   /**
    * 页面的初始数据
    */
   data: {
+    userInfo:{
+      avatar:'https://img0.baidu.com/it/u=3204281136,1911957924&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500',
+      name:"未登录"
+    },
     userLocation:{
       longitude:0,
       latitude:0,
@@ -22,18 +27,105 @@ Page({
     selectedLocation: null, // 当前选中的地点信息
     destination: null, // 目的地坐标
     isNavigating: false,
+    navigationStarted:false,
     updateInterval: null,
     lastUpdateTime: 0,
-    arrivalCount: 0 
+    arrivalCount: 0 ,
+    start:{
+      name :'',
+      latitude:null,
+      longitude:null
+    },
+    end:{
+      name :'',
+      latitude:null,
+      longitude:null
+    },
+    campusIndex:0,
+    campusesType:[]
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function (options) {
-    this.fetchType();
+  onLoad() {
+    this.fetchCampusType();//获取校区类型
+    this.fetchType(); //获取点位类型
     this.initLocal();// 获取用户位置
+    if (user.isLoggedIn()) {
+      const userInfo = user.getUserInfo();
+      this.setData({
+        userInfo: {
+          avatar: userInfo.avatar,
+          name: userInfo.name
+        }
+      });
+    }
   },
+  onShow(){
+    if (user.isLoggedIn()) {
+      const userInfo = user.getUserInfo();
+      this.setData({
+        userInfo: {
+          avatar: userInfo.avatar,
+          name: userInfo.name
+        }
+      });
+    }
+  },
+
+  // 封装公共导航逻辑
+  async handleNavigation(startLat, startLng, endLat, endLng){
+    try {
+      // 请求导航路线数据
+      const serverRes = await request({
+        url: app.globalData.URL + "navigation/navigation",
+        method: "POST",
+        data: {
+          startLat,
+          startLng,
+          endLat,
+          endLng,
+        },
+      });
+
+      console.log("返回导航路线数据:", serverRes);
+
+      if (serverRes.code === 1 && serverRes.data) {
+        this.updateRoute(serverRes.data); // 更新初始路线
+        // 存储目的地坐标
+        this.setData({
+          destination: { latitude: endLat, longitude: endLng },
+          isNavigating: true,
+          navigationStarted: true,
+        });
+        // 清除已有定时器
+        if (this.data.updateInterval) {
+          clearInterval(this.data.updateInterval);
+        }
+        // 启动定时更新
+        const intervalId = setInterval(() => {
+          this.updateLocationAndRoute();
+        }, 1000);
+
+        this.setData({ updateInterval: intervalId });
+      } else {
+        console.error("导航数据获取失败");
+        wx.showToast({
+          title: "导航数据获取失败",
+          icon: "none",
+        });
+      }
+    } catch (error) {
+      console.error("导航请求失败:", error);
+      wx.showToast({
+        title: "导航请求失败，请稍后重试",
+        icon: "none",
+      });
+    }
+  },
+
+
   initLocal() {
     wx.getLocation({
       type: 'gcj02',
@@ -43,7 +135,12 @@ Page({
           userLocation:{
             latitude: res.latitude,
             longitude: res.longitude,
-          }
+          },
+          start:{
+            name :'我的位置',
+            latitude: res.latitude,
+            longitude:res.longitude
+          },
         });
       },
       fail: (err) => {
@@ -54,6 +151,39 @@ Page({
         });
       },
     });
+  },
+ //获取校区类型
+  async fetchCampusType(){
+    try{
+      const serverRes = await request({
+        url:app.globalData.URL+"navigation/campusType",
+        method:"GET"
+      })
+      console.log("校区类型：",serverRes.data)
+      this.setData({
+        campusesType:serverRes.data.map(item=>({
+          id:item.id,
+          name:item.name,
+          description:item.description
+        }))
+      })
+      wx.setStorageSync("campus",this.data.campusesType[this.data.campusIndex])
+      // console.log("this is a campusesType[campusIndex]:",this.data.campusesType[0])
+    }catch (error) {
+      console.error("获取校区类型失败", error);
+      wx.showToast({
+        title: "加载校区类型失败",
+        icon: "none",
+      });
+    }
+  },
+  bindCampusChange(e) {
+    const index = e.detail.value;
+    this.setData({
+      campusIndex: index
+    });
+    console.log('选择的校区：', this.data.campusesType[index].name);
+    wx.setStorageSync("campus",this.data.campusesType[index])
   },
 
   /**
@@ -115,7 +245,13 @@ Page({
         }
   
         // 执行登录操作
-        await app.wxLogin();
+        const userInfo = await app.wxLogin(); 
+        this.setData({
+          userInfo:{
+            avatar: userInfo.avatar,
+            name: userInfo.name
+          }
+        })
       }
   
       // 请求标记点数据
@@ -215,69 +351,40 @@ Page({
     });
   },
 
-  /**
+ /**
    * 开始导航
    */
   async startNavigation() {
-    try {
-      const { latitude, longitude } = this.data.selectedLocation;
-
-      // 请求导航路线数据
-      const serverRes = await request({
-        url: app.globalData.URL+"navigation/navigation",
-        method: "POST",
-        data: {
-          startLat: this.data.userLocation.latitude,
-          startLng: this.data.userLocation.longitude,
-          endLat: latitude,
-          endLng: longitude,
-        },
-      });
-  
-      console.log("返回导航路线数据:", serverRes);
-  
-      if (serverRes.code === 1 && serverRes.data) {
-        this.updateRoute(serverRes.data); // 更新初始路线
-        // 存储目的地坐标
-        this.setData({
-          destination: { latitude, longitude },
-          isNavigating: true
-        });
-        // 清除已有定时器
-        if (this.data.updateInterval) {
-          clearInterval(this.data.updateInterval);
-        }
-        // 启动定时更新
-        const intervalId = setInterval(() => {
-          this.updateLocationAndRoute();
-        }, 1000);
-        
-        this.setData({ updateInterval: intervalId });
-      } else {
-        console.error("导航数据获取失败");
-        wx.showToast({
-          title: "导航数据获取失败",
-          icon: "none",
-        });
-      }
-    } catch (error) {
-      console.error("导航请求失败:", error);
-      wx.showToast({
-        title: "导航请求失败，请稍后重试",
-        icon: "none",
-      });
-    }
+    const { latitude, longitude } = this.data.selectedLocation;
+    await this.handleNavigation(
+      this.data.userLocation.latitude,
+      this.data.userLocation.longitude,
+      latitude,
+      longitude
+    );
   },
 
-    /**
+  async startNavigation_1() {
+    if (!this.data.start || !this.data.end) {
+      wx.showToast({ title: '起点或目的地不能为空', icon: 'none' });
+      return;
+    }
+    await this.handleNavigation(
+      this.data.start.latitude,
+      this.data.start.longitude,
+      this.data.end.latitude,
+      this.data.end.longitude
+    );
+  },
+  /**
    * 更新定位和路线
    */
   async updateLocationAndRoute() {
     try {
-      const authStatus = await wx.getSetting({});
-      if (!authStatus.authSetting['scope.userLocation']) {
-          wx.showToast({ title: '请开启定位权限', icon: 'none' });
-          return;
+      const { authSetting } = await wx.getSetting();
+      if (!authSetting['scope.userLocation']) {
+        wx.showToast({ title: '请开启定位权限', icon: 'none' });
+        return;
       }
       // 获取最新位置
       const location = await new Promise((resolve, reject) => {
@@ -288,7 +395,7 @@ Page({
           fail: (err) => {
             wx.showToast({ title: `定位失败:${err.errMsg}`, icon: 'none' });
             reject(err);
-          }
+          },
         });
       });
 
@@ -296,28 +403,30 @@ Page({
       this.setData({
         userLocation: {
           latitude: location.latitude,
-          longitude: location.longitude
-        }
+          longitude: location.longitude,
+        },
       });
 
       // 到达判断
-      const distance = this.calculateDistance(
+      const distance = calculateDistance(
         location.latitude,
         location.longitude,
         this.data.destination.latitude,
         this.data.destination.longitude
       );
-      if(distance <= 2){
-          this.data.arrivalCount++;
-          if(this.data.arrivalCount >= 3){
-              wx.showToast({ title: '已到达目的地', icon: 'success' });
-              return this.stopNavigation();
-          }
+      if (distance <= 2) {
+        this.data.arrivalCount++;
+        if (this.data.arrivalCount >= 3) {
+          wx.showToast({ title: '已到达目的地', icon: 'success' });
+          return this.stopNavigation();
+        }
       } else {
-          this.setData({ arrivalCount: 0 });
+        this.setData({ arrivalCount: 0 });
       }
+
       // 频率控制
-      if(Date.now() - this.data.lastUpdateTime < 1000) return;
+      if (Date.now() - this.data.lastUpdateTime < 1000) return;
+
       // 请求路线更新
       const serverRes = await request({
         url: app.globalData.URL + "navigation/update",
@@ -326,8 +435,8 @@ Page({
           currentLat: location.latitude,
           currentLng: location.longitude,
           endLat: this.data.destination.latitude,
-          endLng: this.data.destination.longitude
-        }
+          endLng: this.data.destination.longitude,
+        },
       });
 
       if (serverRes.code === 1 && serverRes.data) {
@@ -338,8 +447,8 @@ Page({
         }
       } else {
         wx.showToast({ title: '路线更新失败', icon: 'none' });
-    }
-    this.setData({ lastUpdateTime: Date.now() });
+      }
+      this.setData({ lastUpdateTime: Date.now() });
     } catch (error) {
       console.error('定位更新失败:', error);
     }
@@ -350,12 +459,18 @@ Page({
    */
   isSameRoute(newRouteData) {
     const oldPoints = this.data.polyline[0]?.points || [];
-    const newPoints = newRouteData.map(p => ({
+    const newPoints = newRouteData.map((p) => ({
       latitude: p.endLatitude,
-      longitude: p.endLongitude
+      longitude: p.endLongitude,
     }));
-    
-    return JSON.stringify(oldPoints) === JSON.stringify(newPoints);
+    return (
+      oldPoints.length === newPoints.length &&
+      oldPoints.every(
+        (point, index) =>
+          point.latitude === newPoints[index].latitude &&
+          point.longitude === newPoints[index].longitude
+      )
+    );
   },
 
   /**
@@ -367,13 +482,14 @@ Page({
       this.setData({
         updateInterval: null,
         isNavigating: false,
+        navigationStarted:false,
         polyline: [],
         markers: [],
-        destination: null
+        destination: null,
       });
       wx.showToast({
         title: '导航已结束',
-        icon: 'success'
+        icon: 'success',
       });
     }
   },
@@ -382,21 +498,23 @@ Page({
    * 更新路线
    */
   updateRoute(routeData) {
-    const routePoints = routeData.map(point => ({
+    const routePoints = routeData.map((point) => ({
       latitude: point.endLatitude,
       longitude: point.endLongitude,
     }));
 
-    const polyline = [{
-      points: routePoints,
-      color: "#FF0000", // 路线颜色
-      width: 6, // 路线宽度
-      dottedLine: false, // 是否虚线
-    }];
+    const polyline = [
+      {
+        points: routePoints,
+        color: "#FF0000", // 路线颜色
+        width: 6, // 路线宽度
+        dottedLine: false, // 是否虚线
+      },
+    ];
     this.setData({
-      showDialog:false,
-      selectedLocation:null,
-      polyline: polyline,
+      showDialog: false,
+      selectedLocation: null,
+      polyline,
       markers: [
         {
           id: 1,
@@ -418,37 +536,30 @@ Page({
     });
   },
 
-
-  calculateDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371e3; // 地球半径，单位米
-    const φ1 = lat1 * Math.PI / 180;
-    const φ2 = lat2 * Math.PI / 180;
-    const Δφ = (lat2 - lat1) * Math.PI / 180;
-    const Δλ = (lon2 - lon1) * Math.PI / 180;
-
-    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-              Math.cos(φ1) * Math.cos(φ2) *
-              Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-    return R * c; // 返回距离，单位米
-  },
     /**
    * 跳转到搜索页面
    */
-  ToSearch() {
+  ToSearch(e) {
+    const type = e.currentTarget.dataset.type;
     wx.navigateTo({
-      url: "/pages/search/search",
+      url: `/pages/search/search?type=${type}`,
+      events: {
+        selectLocation: (res) => {
+          this.handleLocationSelect(res.detail, type);
+        }
+      }
     });
   },
-  /**
-   * 页面卸载时关闭 WebSocket
-   */
-  onUnload() {
-    if (this.data.websocket) {
-      this.data.websocket.close();
-    }
+  handleLocationSelect(location, type) {
+    this.setData({ 
+      [type]: location ,     
+      isNavigating: true });
   },
 
 
+  ToMy(){
+    wx.navigateTo({
+      url: '/pages/my/my',
+    })
+  },
 })

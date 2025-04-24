@@ -24,13 +24,6 @@
           "scene": null
         },
         {
-          "name": "pages/index/index",
-          "pathName": "pages/index/index",
-          "query": "",
-          "launchMode": "default",
-          "scene": null
-        },
-        {
           "name": "pages/path/path",
           "pathName": "pages/path/path",
           "query": "",
@@ -47,13 +40,6 @@
         {
           "name": "pages/info/info",
           "pathName": "pages/info/info",
-          "query": "",
-          "launchMode": "default",
-          "scene": null
-        },
-        {
-          "name": "pages/resource/resource",
-          "pathName": "pages/resource/resource",
           "query": "",
           "launchMode": "default",
           "scene": null

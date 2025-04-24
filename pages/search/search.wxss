@@ -1,0 +1,96 @@
+/* pages/search/search.wxss */
+.container {
+  padding: 10px; /* 减少容器的内边距 */
+  background-color: #F5F5F5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column; /* 使用 Flexbox 布局 */
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #FFFFFF;
+  border-radius: 8px;
+  margin-bottom: 10px; /* 调整搜索框与下方内容的距离 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.search-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+}
+
+.search-input {
+  flex: 1;
+  font-size: 16px;
+  color: #333333;
+}
+
+.clear-button {
+  width: 20px;
+  height: 20px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.search-content {
+  margin-top: 10px; /* 确保内容离搜索框不远 */
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333333;
+}
+
+.clear-history-button {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.history-list, .result-list {
+  margin-top: 10px;
+}
+
+.history-item, .result-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #FFFFFF;
+  border-radius: 8px;
+  margin: 5px 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.history-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+}
+
+.result-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333333;
+}
+
+.result-description {
+  font-size: 14px;
+  color: #999999;
+  margin-top: 5px;
+}
+
+.no-results {
+  text-align: center;
+  font-size: 16px;
+  color: #999999;
+  margin-top: 20px;
+}
