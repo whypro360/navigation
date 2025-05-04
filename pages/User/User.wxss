@@ -1,0 +1,110 @@
+/* pages/User/User.wxss */
+
+.container {
+  padding: 20rpx;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.section {
+  margin-bottom: 30rpx;
+  background-color: #fff;
+  padding: 20rpx;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.03);
+}
+
+.picker {
+  padding: 20rpx;
+  background-color: #f9f9f9;
+  border: 1rpx solid #e5e5e5;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.user-info {
+  border: 1rpx solid #eaeaea;
+  padding: 30rpx 20rpx;
+  border-radius: 12rpx;
+  background-color: #ffffff;
+}
+
+.avatar {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 50%;
+  margin: 0 auto 20rpx;
+  display: block;
+  border: 2rpx solid #ddd;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 25rpx;
+  font-size: 28rpx;
+}
+
+.input-group.text-only {
+  justify-content: space-between;
+}
+
+.input-group .label {
+  width: 160rpx;
+  color: #555;
+  font-weight: 500;
+}
+
+/* 输入框样式 */
+.input-group input {
+  flex: 1; /* 让输入框占据剩余空间 */
+  padding: 16rpx 20rpx; /* 增加内边距使文本与输入框边缘保持适当距离 */
+  border: 1rpx solid #ccc; /* 设置边框颜色 */
+  border-radius: 8rpx; /* 圆角边框 */
+  font-size: 28rpx; /* 字体大小 */
+  color: #333; /* 文本颜色 */
+  margin-left: 10rpx; /* 与label之间留出一些空隙 */
+}
+
+/* 当输入框获得焦点时的样式 */
+.input-group input:focus {
+  outline: none; /* 移除默认的聚焦边框 */
+  border-color: #1aad19; /* 聚焦时边框颜色变为绿色 */
+  box-shadow: 0 0 8rpx rgba(26, 173, 25, 0.5); /* 添加轻微阴影增强视觉反馈 */
+}
+
+/* 禁用状态下的输入框样式 */
+.input-group input[disabled] {
+  background-color: #f0f0f0; /* 灰色背景表示不可编辑 */
+  color: #888; /* 浅灰色文字 */
+  cursor: not-allowed; /* 鼠标指针样式 */
+}
+.input-group .picker-text {
+  flex: 1;
+  padding: 12rpx 20rpx;
+  border: 1rpx solid #ccc;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.input-group .picker-text {
+  color: #333;
+}
+
+.switch-group {
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10rpx;
+}
+
+.submit-btn {
+  background-color: #1aad19;
+  color: white;
+  border-radius: 40rpx;
+  font-size: 32rpx;
+  margin-top: 40rpx;
+  padding: 20rpx 0;
+  box-shadow: 0 6rpx 16rpx rgba(26, 173, 25, 0.2);
+}

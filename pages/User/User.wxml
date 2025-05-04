@@ -1,0 +1,65 @@
+<!-- pages/User/User.wxml -->
+
+<view class="container">
+  <view class="section">
+    <!-- 用户下拉选择 -->
+    <picker mode="selector" range="{{userNames}}" value="{{selectedIndex}}" bindchange="onUserSelect">
+      <view class="picker">选择用户：{{userNames[selectedIndex]}}</view>
+    </picker>
+  </view>
+
+  <view wx:if="{{selectedUser.id}}" class="section user-info">
+    <!-- 用户头像 -->
+    <view class="avatar-container">
+      <image class="avatar" src="{{selectedUser.avatar}}" mode="aspectFill" />
+    </view>
+
+    <!-- 姓名 -->
+    <view class="input-group">
+      <text class="label">姓名：</text>
+      <input class="input" type="text" value="{{selectedUser.name}}" disabled />
+    </view>
+
+    <!-- 手机号 -->
+    <view class="input-group">
+      <text class="label">手机号：</text>
+      <input class="input" data-key="phone" value="{{selectedUser.phone}}" bindinput="onInputChange" />
+    </view>
+
+    <!-- 身份证号 -->
+    <view class="input-group">
+      <text class="label">身份证号：</text>
+      <input class="input" data-key="idNumber" value="{{selectedUser.idNumber}}" bindinput="onInputChange" />
+    </view>
+
+    <!-- 性别 -->
+  <view class="input-group">
+    <text class="label">性别：</text>
+    <picker mode="selector" range="{{['男','女']}}" data-key="sex"
+          bindchange="onSexChange"
+          value="{{selectedUser.sex === '男' ? 0 : 1}}">
+      <view class="picker-text">{{selectedUser.sex || '请选择'}}</view>
+    </picker>
+  </view>
+
+    <!-- 角色 -->
+    <view class="input-group">
+      <text class="label">角色：</text>
+      <picker mode="selector" range="{{['普通用户','管理员']}}" data-key="role"
+              bindchange="onRoleChange"
+              value="{{selectedUser.role === '0' ? 0 : 1}}">
+        <view class="picker-text">{{selectedUser.role === '0' ? '普通用户':'管理员' }}</view>
+      </picker>
+    </view>
+
+    <!-- 状态开关 -->
+    <view class="input-group switch-group">
+      <text class="label">是否启用：</text>
+      <switch color="#1aad19" checked="{{selectedUser.status === 1}}"
+              bindchange="onStatusChange" />
+    </view>
+  </view>
+
+  <!-- 提交按钮 -->
+  <button wx:if="{{selectedUser.id}}" class="submit-btn" bindtap="submitChanges">提交修改</button>
+</view>

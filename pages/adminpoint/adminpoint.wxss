@@ -1,0 +1,199 @@
+/* 全局样式 */
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 20rpx;
+  background-color: #f5f7fa;
+  font-family: 'Helvetica Neue', sans-serif;
+  height: 100vh;
+}
+
+/* 地图 */
+#myMap {
+  width: 100%;
+  height: calc(100vh - 80px);
+  border-radius: 10px;
+  margin-top: 20px;
+}
+
+/* 拾取器卡片 */
+.picker-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #ffffff;
+  padding: 20rpx;
+  border-radius: 10rpx;
+  box-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.05);
+  font-size: 32rpx;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.picker-item {
+  display: flex;
+  align-items: center;
+}
+
+.picker-text {
+  margin-right: 10rpx;
+}
+
+.status-indicator {
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 50%;
+}
+
+/* 遮罩层 */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.overlay-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+/* 表单容器 */
+.form-container {
+  background-color: #ffffff;
+  padding: 40rpx;
+  border-radius: 20rpx;
+  box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.1);
+  width: 80%;
+  max-width: 600px;
+  z-index: 1001;
+  transform-origin: center;
+  transition: transform 0.3s ease-in-out;
+  position: relative;
+}
+
+/* 表单头部 */
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.form-title {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.close-icon {
+  width: 40rpx;
+  height: 40rpx;
+  opacity: 0.8;
+}
+
+/* 表单主体 */
+.form-body {
+  height: 600rpx;
+  overflow-y: auto;
+  padding-right: 20rpx;
+}
+
+/* 表单项 */
+.form-group {
+  margin-bottom: 30rpx;
+}
+
+.form-label {
+  display: block;
+  font-weight: 500;
+  color: #444;
+  margin-bottom: 15rpx;
+  font-size: 30rpx;
+}
+
+/* 表单输入框 */
+.form-input {
+  width: 100%;
+  /* height: 10rpx; */
+  /* padding: 20rpx; */
+  border: 2rpx solid #e0e0e0;
+  border-radius: 10rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+  background-color: #fafafa;
+}
+
+.form-input:focus {
+  border-color: #07c160;
+  box-shadow: 0 0 10rpx rgba(7, 193, 96, 0.2);
+  background-color: #ffffff;
+}
+
+/* 文本域 */
+.form-textarea {
+  width: 100%;
+  height: 200rpx;
+  padding: 20rpx;
+  border: 2rpx solid #e0e0e0;
+  border-radius: 10rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  background-color: #fafafa;
+  resize: none;
+}
+
+.form-textarea:focus {
+  border-color: #07c160;
+  box-shadow: 0 0 10rpx rgba(7, 193, 96, 0.2);
+  background-color: #ffffff;
+}
+
+/* 开关容器 */
+.switch-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.form-switch {
+  transform: scale(1);
+  margin-right: 20rpx;
+}
+
+.switch-text {
+  font-size: 28rpx;
+  color: #666;
+}
+
+/* 保存按钮 */
+.save-button {
+  background-color: #07c160;
+  color: white;
+  font-size: 32rpx;
+  padding: 25rpx 0;
+  border-radius: 50rpx;
+  width: 100%;
+  text-align: center;
+  margin-top: 40rpx;
+  box-shadow: 0 10rpx 20rpx rgba(7, 193, 96, 0.2);
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.save-button:hover {
+  background-color: #05a150;
+  box-shadow: 0 15rpx 25rpx rgba(7, 193, 96, 0.3);
+}

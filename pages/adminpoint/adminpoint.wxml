@@ -1,0 +1,57 @@
+<view class="container">
+  <!-- 地图 -->
+  <map id="myMap" longitude="{{longitude}}" latitude="{{latitude}}" scale="14" markers="{{markers}}"
+    style="width: 100%; height: calc(100vh - 80px); border-radius: 10px; margin-top: 20px;" bindmarkertap="onMarkerTap"></map>
+  <view wx:if="{{type == 'point'}} ">
+    <!-- 下拉选择器 -->
+    <picker mode="selector" range="{{points}}" range-key="name" value="{{selectedPointIndex}}"
+      bindchange="bindPickerChange">
+      <view class="picker-card">
+        <view class="picker-item">
+          <text class="picker-text">当前选择: {{points[selectedPointIndex].name}}</text>
+          <view class="status-indicator" style="background-color: {{points[selectedPointIndex].status === 1 ? '#07c160' : '#ff0000'}};"></view>
+        </view>
+      </view>
+    </picker>
+  </view>
+  <!-- TODO 路径管理待完成 -->
+
+  <!-- 表单弹出层 -->
+  <view class="overlay" wx:if="{{showForm}}">
+    <view class="overlay-background" bindtap="closeForm"></view>
+    <view class="form-container">
+      <form bindsubmit="formSubmit">
+        <view class="form-header">
+          <text class="form-title">编辑点位信息</text>
+          <image src="/images/close.png" class="close-icon" bindtap="closeForm"></image>
+        </view>
+        <scroll-view scroll-y class="form-body">
+          <view class="form-group">
+            <label class="form-label">名称:</label>
+            <input class="form-input" type="text" placeholder="请输入点位名称" value="{{newPoint.name}}" bindinput="onNameInput"/>
+          </view>
+          <view class="form-group">
+            <label class="form-label">经度:</label>
+            <input class="form-input" type="number" placeholder="请输入经度" value="{{newPoint.longitude}}" bindinput="onLongitudeInput"/>
+          </view>
+          <view class="form-group">
+            <label class="form-label">纬度:</label>
+            <input class="form-input" type="number" placeholder="请输入纬度" value="{{newPoint.latitude}}" bindinput="onLatitudeInput"/>
+          </view>
+          <view class="form-group">
+            <label class="form-label">状态:</label>
+            <view class="switch-container">
+              <switch class="form-switch" checked="{{newPoint.status === 1}}" bindchange="toggleStatus"/>
+              <text class="switch-text">{{newPoint.status === 1 ? '启用' : '禁用'}}</text>
+            </view>
+          </view>
+          <view class="form-group">
+            <label class="form-label">描述:</label>
+            <textarea class="form-textarea" placeholder="请输入描述" value="{{newPoint.description}}" bindinput="onDescriptionInput"></textarea>
+          </view>
+        </scroll-view>
+        <button formType="submit" class="save-button">保存修改</button>
+      </form>
+    </view>
+  </view>
+</view>

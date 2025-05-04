@@ -5,7 +5,9 @@
     "pages/info/info",
     "pages/point/point",
     "pages/path/path",
-    "pages/search/search"
+    "pages/search/search",
+    "pages/adminpoint/adminpoint",
+    "pages/User/User"
 
   ],
   "window": {

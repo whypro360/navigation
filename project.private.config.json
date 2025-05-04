@@ -10,6 +10,13 @@
     "miniprogram": {
       "list": [
         {
+          "name": "pages/adminpoint/adminpoint",
+          "pathName": "pages/adminpoint/adminpoint",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
           "name": "pages/search/search",
           "pathName": "pages/search/search",
           "query": "",

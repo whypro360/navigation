@@ -3,16 +3,13 @@ const user = require("../../utils/user.js");
 const { request } = require("../../utils/request");
 
 Page({
-  /**
-   * 页面的初始数据
-   */
   data: {
     login: {
       avatar: 'https://img0.baidu.com/it/u=3204281136,1911957924&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500',
       name: '点击登录',
+      role : "0"
     }
   },
-
 
   onLoad(){
     if (user.isLoggedIn()) {
@@ -20,19 +17,20 @@ Page({
       this.setData({
         login: {
           avatar: userInfo.avatar,
-          name: userInfo.name
+          name: userInfo.name,
+          role : userInfo.role
         }
       });
     }
   },
-
   onShow(){
     if (user.isLoggedIn()) {
       const userInfo = user.getUserInfo();
       this.setData({
         login: {
           avatar: userInfo.avatar,
-          name: userInfo.name
+          name: userInfo.name,
+          role : userInfo.role
         }
       });
     }
@@ -48,7 +46,8 @@ Page({
         this.setData({
           login: {
             avatar: userInfo.avatar  || this.data.login.avatar,
-            name: userInfo.name
+            name: userInfo.name,
+            role: userInfo.role
           }
         });
       } catch (err) {
@@ -172,13 +171,20 @@ Page({
 
   toPath() {
     wx.navigateTo({
-      url: '/pages/path/path',
-      success: function (res) {
-        console.log("跳转路线管理界面成功！");
-      },
-      fail: (res) => {},
-      complete: (res) => {},
+      url: '/pages/path/path'
     });
   },
+
+  toAdminPoint(e){
+    const type = e.currentTarget.dataset.type;
+    wx.navigateTo({
+      url:`/pages/adminpoint/adminpoint?type=${type}`
+    })
+  },
+  toUser(){
+    wx.navigateTo({
+      url: '/pages/User/User'
+    })
+  }
 
 });

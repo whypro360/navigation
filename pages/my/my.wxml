@@ -36,14 +36,35 @@
       </view>
     </view>
     <view class="list">
-      <view class="li" bind:tap="toPoint">
+      <view class="li" bind:tap="toAdminPoint" data-type = "point" wx:if="{{login.role == '1'}}">
+        <view class="icon">
+          <image src="/images/添加点位.png"></image>
+        </view>
+        <view class="text">点位管理</view>
+        <image class="to" src="/images/-to-right.png"></image>
+      </view>
+      <view class="li" bind:tap="toPoint" wx:if="{{login.role == '0'}}">
         <view class="icon">
           <image src="/images/添加点位.png"></image>
         </view>
         <view class="text">添加点位</view>
         <image class="to" src="/images/-to-right.png"></image>
       </view>
-      <view class="li" bind:tap="toPath">
+      <view class="li" bind:tap="toAdminPoint" data-type = "path" wx:if="{{login.role == '1'}}">
+        <view class="icon">
+          <image src="/images/路线管理.png"></image>
+        </view>
+        <view class="text">路线管理</view>
+        <image class="to" src="/images/-to-right.png"></image>
+      </view>
+      <view class="li" bind:tap="toUser" wx:if="{{login.role == '1'}}">
+        <view class="icon">
+          <image src="/images/用户管理.png"></image>
+        </view>
+        <view class="text">用户管理</view>
+        <image class="to" src="/images/-to-right.png"></image>
+      </view>
+      <view class="li" bind:tap="toPath" wx:if="{{login.role == '0'}}">
         <view class="icon">
           <image src="/images/路线管理.png"></image>
         </view>

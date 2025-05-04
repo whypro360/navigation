@@ -6,7 +6,8 @@ const url = ['localhost','192.168.54.134','47.111.107.231']
 
 App({
   globalData: {
-    URL: `http://${url[1]}:8080/`
+    URL: `http://${url[0]}:8080/`
+    // URL:'https://sshnavigation.dpdns.org'
   },
 
   // 修改 app.js 的 wxLogin 方法
@@ -30,7 +31,7 @@ App({
         }
         console.log('临时登录凭证 code:', loginRes.code);
         const serverRes = await request({
-          url: `http://${url[1]}:8080/user/user/login`,//
+          url: `http://${url[0]}:8080/user/user/login`,//
           method: 'POST',
           data: {
             code: loginRes.code
