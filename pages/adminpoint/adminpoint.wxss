@@ -197,3 +197,47 @@
   background-color: #05a150;
   box-shadow: 0 15rpx 25rpx rgba(7, 193, 96, 0.3);
 }
+
+
+/* 路径选择器容器 */
+.path-picker-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30rpx;
+}
+
+/* 每个 picker 的外层容器 */
+.path-picker-item {
+  width: 50%; /* 并排显示 */
+}
+
+/* 自定义 picker 卡片样式 */
+.path-picker {
+  padding: 25rpx;
+  background-color: #ffffff;
+  border-radius: 12rpx;
+  box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.path-picker:hover {
+  box-shadow: 0 6rpx 16rpx rgba(7, 193, 96, 0.15);
+}
+
+/* 下拉文本样式 */
+.path-picker .selected-text {
+  font-size: 28rpx;
+  color: #555;
+  margin-top: 10rpx;
+  display: block;
+}
+
+/* 图标样式 */
+.picker-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 15rpx; /* 根据实际调整间距 */
+}

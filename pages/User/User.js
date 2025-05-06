@@ -135,7 +135,7 @@ Page({
       });
 
       console.log('用户信息更新成功:', res);
-
+      wx.hideLoading();
       wx.showToast({ title: '保存成功' });
 
       // 可选：更新本地用户列表

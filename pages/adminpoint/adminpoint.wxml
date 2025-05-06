@@ -1,26 +1,51 @@
 <view class="container">
   <!-- 地图 -->
-  <map id="myMap" longitude="{{longitude}}" latitude="{{latitude}}" scale="14" markers="{{markers}}"
-    style="width: 100%; height: calc(100vh - 80px); border-radius: 10px; margin-top: 20px;" bindmarkertap="onMarkerTap"></map>
-  <view wx:if="{{type == 'point'}} ">
+  <map id="myMap" 
+  longitude="{{longitude}}" 
+  latitude="{{latitude}}" 
+  scale="14" 
+  polyline = "{{polyline}}"
+  markers="{{markers}}"
+  style="width: 100%; height: calc(100vh - 80px); border-radius: 10px; margin-top: 20px;" bindmarkertap="onMarkerTap"></map>
+  <view wx:if="{{type == 'point'}}">
     <!-- 下拉选择器 -->
     <picker mode="selector" range="{{points}}" range-key="name" value="{{selectedPointIndex}}"
       bindchange="bindPickerChange">
       <view class="picker-card">
         <view class="picker-item">
-          <text class="picker-text">当前选择: {{points[selectedPointIndex].name}}</text>
+          <text class="picker-text">当前选择: {{points[selectedPointIndex].name?points[selectedPointIndex].name:'待选择点位'}}</text>
           <view class="status-indicator" style="background-color: {{points[selectedPointIndex].status === 1 ? '#07c160' : '#ff0000'}};"></view>
         </view>
       </view>
     </picker>
   </view>
-  <!-- TODO 路径管理待完成 -->
+  <!-- 路径选择器 -->
+  <view wx:if="{{type == 'path'}}" class="path-picker-container">
+    <!-- 第一列：起点 -->
+    <picker mode="selector" range="{{startPoints}}" range-key="name" value="{{selectedStartPointIndex}}"
+      bindchange="onStartPointChange" class="path-picker-item">
+      <view class="picker-card path-picker">
+        <!-- 使用图片代替文字 -->
+        <image src="/images/start.png" class="picker-icon"></image>
+        <text class="selected-text">{{startPoints[selectedStartPointIndex] ? startPoints[selectedStartPointIndex].name : '暂无起点'}}</text>
+      </view>
+    </picker>
 
+    <!-- 第二列：终点 -->
+    <picker mode="selector" range="{{endPoints}}" range-key="name" value="{{selectedEndPointIndex}}"
+      bindchange="onEndPointChange" disabled="{{!startPointSelected}}" class="path-picker-item">
+      <view class="picker-card path-picker">
+        <!-- 使用图片代替文字 -->
+        <image src="/images/end.png" class="picker-icon"></image>
+        <text class="selected-text">{{endPoints[selectedEndPointIndex] ? endPoints[selectedEndPointIndex].name : '暂无终点'}}</text>
+      </view>
+    </picker>
+  </view>
   <!-- 表单弹出层 -->
   <view class="overlay" wx:if="{{showForm}}">
     <view class="overlay-background" bindtap="closeForm"></view>
     <view class="form-container">
-      <form bindsubmit="formSubmit">
+      <form>
         <view class="form-header">
           <text class="form-title">编辑点位信息</text>
           <image src="/images/close.png" class="close-icon" bindtap="closeForm"></image>
@@ -50,7 +75,44 @@
             <textarea class="form-textarea" placeholder="请输入描述" value="{{newPoint.description}}" bindinput="onDescriptionInput"></textarea>
           </view>
         </scroll-view>
-        <button formType="submit" class="save-button">保存修改</button>
+        <button bindtap="pointFormSubmit" class="save-button">保存修改</button>
+      </form>
+    </view>
+  </view>
+
+  <!-- 路径表单弹出层 -->
+  <view class="overlay" wx:if="{{showPathForm}}">
+    <view class="overlay-background" bindtap="closePathForm"></view>
+    <view class="form-container">
+      <form>
+        <view class="form-header">
+          <text class="form-title">添加新路径</text>
+          <image src="/images/close.png" class="close-icon" bindtap="closePathForm"></image>
+        </view>
+        <scroll-view scroll-y class="form-body">
+          <view class="form-group">
+            <label class="form-label">起点名称:</label>
+            <text class="form-input">{{newPath.startName ? newPath.startName : '未选择起点'}}</text>
+          </view>
+          <view class="form-group">
+            <label class="form-label">起点经纬度:</label>
+            <text class="form-input">{{newPath.startLatitude}}, {{newPath.startLongitude}}</text>
+          </view>
+          <view class="form-group">
+            <label class="form-label">终点名称:</label>
+            <text class="form-input">{{newPath.endName ? newPath.endName : '未选择终点'}}</text>
+          </view>
+          <view class="form-group">
+            <label class="form-label">终点经纬度:</label>
+            <text class="form-input">{{newPath.endLatitude}}, {{newPath.endLongitude}}</text>
+          </view>
+          <view class="form-group">
+            <label class="form-label">路径状态:</label>
+            <switch class="form-switch"  checked="{{newPath.status === 1}}" bindchange="togglePathStatus"/>
+            <text class="switch-text">{{newPath.status === 1 ? '启用' : '禁用'}}</text>
+          </view>
+        </scroll-view>
+        <button class="save-button" bindtap="pathFormSubmit">保存路径</button>
       </form>
     </view>
   </view>
