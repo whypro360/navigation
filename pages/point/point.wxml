@@ -43,7 +43,33 @@
       bindinput="onDescribe"
     />
   </view>
-
+  <!-- 图片上传区域 -->
+  <view class="upload-section">
+    <view class="label">上传图片：</view>
+    <view class="upload-container">
+      <block wx:if="{{!image}}">
+        <button 
+          class="upload-btn" 
+          bindtap="chooseImage"
+        >
+          <image src="/images/icon-upload.png" class="upload-icon"/>选择图片
+        </button>
+      </block>
+      <block wx:else>
+        <view class="preview-container">
+          <view class="image-wrapper">
+            <image 
+              class="image-preview" 
+              src="{{image}}" 
+              mode="aspectFill"
+              bindtap="previewImage"
+            />
+            <view class="delete-btn" bindtap="deleteImage">删除</view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
   <!-- 提交按钮 -->
-  <button class="submit-btn" bindtap="submitData">确认上传</button>
+  <button class="get-location-btn" style="width: 50%;background-color: aquamarine;" bindtap="submitData">确认上传</button>
 </view>

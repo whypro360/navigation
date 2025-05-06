@@ -200,7 +200,7 @@ Page({
         resourceTypes: serverRes.data.map(item => ({
           id: item.id,
           typeName: item.typeName,
-          icon: item.iconUrl, // 假设后端返回了图标URL
+          icon: item.iconUrl, 
         })),
       });
     } catch (error) {
@@ -279,7 +279,7 @@ Page({
         iconPath: item.iconUrl || "/images/default-marker.png", // 默认图标
         width: 30, // 图标宽度（单位：px）
         height: 30, // 图标高度（单位：px）
-        image: item.imageUrl || '/images/default-location.png', // 地点图片
+        image: item.picUrl || 'https://navigation-pic.oss-cn-beijing.aliyuncs.com/exampledir/images/OIP-C.jpg', // 地点图片
       }));
       // 更新页面数据
       this.setData({

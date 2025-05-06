@@ -1,4 +1,5 @@
 const app = getApp();
+const user = require("../../utils/user.js");
 const { request } = require("../../utils/request");
 
 Page({
@@ -10,7 +11,8 @@ Page({
     types: [], 
     typeMap: {}, 
     selectedType: '',
-    selectedTypeId: null // 存储选中的点位类型的ID
+    selectedTypeId: null ,// 存储选中的点位类型的ID
+    image:''
   },
 
  onLoad(){
@@ -126,6 +128,38 @@ Page({
     });
   },
 
+  // 选择图片
+  chooseImage() {
+    const that = this;
+    wx.chooseMedia({
+      count: 1, // 设置只能选择一张图片
+      mediaType: ['image'], // 限制只能选择图片
+      sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+      success(res) {
+        // 返回选定照片的本地文件路径，tempFilePath可以作为img标签的src属性显示图片
+        const tempFilePath = res.tempFiles[0].tempFilePath;
+        that.setData({
+          image: tempFilePath
+        });
+      }
+    });
+  },
+
+  // 预览图片
+  previewImage() {
+    wx.previewImage({
+      current: this.data.image, // 当前显示图片的http链接
+      urls: [this.data.image] // 需要预览的图片http链接列表
+    });
+  },
+
+  // 删除图片
+  deleteImage() {
+    this.setData({
+      image: ''
+    });
+  },
+
   async submitData() {
     if (!this.data.name || !this.data.latitude) {
       return wx.showToast({ title: '请填写名称并获取坐标', icon: 'none' });
@@ -133,7 +167,51 @@ Page({
 
     wx.showLoading({ title: '上传中...' });
     try {
-      // 使用封装的 request 方法
+
+      //先上传图片获取url
+      var pic_url = this.data.image
+      if (pic_url){
+        // 压缩图片
+        const compressRes = await new Promise((resolve, reject) => {
+          wx.compressImage({
+            src: pic_url,
+            quality: 80,
+            success: resolve,
+            fail: reject
+          });
+        });
+        //上传图片
+        const uploadTask = wx.uploadFile({
+          url: app.globalData.URL + 'upload',
+          filePath: compressRes.tempFilePath,
+          name: 'file', 
+          header: {
+            'user_token': user.getUserInfo().token 
+          },
+          formData: {
+            userId: user.getUserInfo().id 
+          },
+          success: (res) => {
+            const result = JSON.parse(res.data);
+            console.log("this is a result:",result)
+            this.setData({image:result.data})
+            if (result.code === 1) {
+              wx.showToast({ title: '上传成功', icon: 'success' });
+            } else {
+              wx.showToast({ title: result.message || '上传失败', icon: 'none' });
+            }
+          },
+          fail: (err) => {
+            console.error('上传失败:', err);
+            wx.showToast({ title: '上传失败，请重试', icon: 'none' });
+          }
+        });
+    
+        // 监听上传进度
+        uploadTask.onProgressUpdate((res) => {
+          console.log(`上传进度：${res.progress}%`);
+        });
+      }
       await request({
         url: app.globalData.URL+'navigation/point',
         method: 'POST',
@@ -144,6 +222,7 @@ Page({
           description: this.data.describe,
           campusId: 1,
           typeId: this.data.selectedTypeId,
+          picUrl:this.data.image
         },
       });
       wx.showToast({ title: '上传成功' });
@@ -154,4 +233,5 @@ Page({
       wx.hideLoading();
     }
   },
+
 });

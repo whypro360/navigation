@@ -76,7 +76,8 @@ Page({
         name: this.data.userInfo.name ,
         openid:userIn.openid,
         token:userIn.token,
-        avatar:userIn.avatar
+        avatar:userIn.avatar,
+        role:userIn.role
       });
     } catch (err) {
       console.error('提交个人信息失败:', err);

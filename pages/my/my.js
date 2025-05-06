@@ -85,7 +85,7 @@ Page({
           fail: reject
         });
       });
-      console.log("this is a user_token",user.getUserInfo().token )
+      // console.log("this is a user_token",user.getUserInfo().token )
       // 上传图片到服务器
       const uploadTask = wx.uploadFile({
         url: app.globalData.URL + 'upload',
