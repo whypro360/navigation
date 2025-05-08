@@ -4,6 +4,7 @@
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
+  background-color: #f0f4f8; /* 更现代的背景色 */
 }
 
 .top-section {
@@ -11,6 +12,7 @@
   flex-direction: column;
   flex: 1;
   overflow: hidden;
+  padding: 20rpx; /* 增加内边距 */
 }
 
 /* 1. 用户信息部分 */
@@ -19,8 +21,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 20rpx 30rpx;
-  background: linear-gradient(90deg, #f8f9fa 0%, #ffffff 100%);
-  /* box-shadow: 0 4rpx 12rpx rgba(221, 12, 12, 0.05); */
+  border: none;
 }
 
 .user-profile {
@@ -28,12 +29,19 @@
   align-items: center;
 }
 
-.avatar-btn image{
+.avatar-btn {
+  padding: 0;
+  margin-right: 20rpx;
+}
+
+.avatar-btn image {
   width: 80rpx;
   height: 80rpx;
   border-radius: 50%;
-
+  box-shadow: none; /* 确保没有阴影 */
+  border: none; /* 确保没有边框 */
 }
+
 .name {
   font-size: 32rpx;
   color: #2c3e50;
@@ -120,6 +128,7 @@
   padding: 15rpx;
   border-radius: 16rpx;
   background: #f5f5f5;
+  transition: background-color 0.3s, color 0.3s; /* 添加过渡效果 */
 }
 
 .resource-icon {
@@ -141,7 +150,6 @@
 }
 
 /* 4. 导航信息显示部分 */
-/* 2. 导航信息显示部分 */
 .navigation-info-container {
   position: relative;
   padding-bottom: 100rpx; /* 为按钮预留空间 */
@@ -216,6 +224,7 @@
   text-align: center;
   font-size: 28rpx;
   max-width: 200rpx;
+  transition: background-color 0.3s, color 0.3s; /* 添加过渡效果 */
 }
 
 .btn-start {
@@ -232,6 +241,7 @@
   background-color: #f0f0f0;
   color: #666;
 }
+
 /* 5. 地图部分 */
 .map-section {
   flex: 1;
@@ -261,6 +271,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background-color 0.3s; /* 添加过渡效果 */
 }
 
 .control-icon {
@@ -285,8 +296,9 @@
 .custom-dialog {
   width: 80%;
   background: #fff;
-  border-radius: 12rpx;
+  border-radius: 16rpx; /* 增加圆角 */
   padding: 32rpx;
+  box-shadow: 0 8rpx 16rpx rgba(0, 0, 0, 0.2); /* 添加阴影 */
 }
 
 .dialog-title {
@@ -294,12 +306,14 @@
   font-weight: bold;
   display: block;
   margin-bottom: 24rpx;
+  text-align: center; /* 居中标题 */
 }
 
 .dialog-content {
   font-size: 28rpx;
   color: #666;
   margin-bottom: 48rpx;
+  text-align: center; /* 居中文本 */
 }
 
 .location-hint {
@@ -311,7 +325,7 @@
 
 .dialog-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between; /* 调整按钮布局 */
   gap: 48rpx;
 }
 
@@ -320,6 +334,7 @@
   padding: 16rpx 32rpx;
   border-radius: 8rpx;
   font-size: 28rpx;
+  transition: background-color 0.3s; /* 添加过渡效果 */
 }
 
 .btn-cancel {
@@ -335,7 +350,7 @@
 /* 新增图片样式 */
 .location-image-container {
   width: 100%;
-  height: 200rpx;
+  height: 430rpx; /* 进一步增加高度 */
   margin-bottom: 20rpx;
   border-radius: 8rpx;
   overflow: hidden;
@@ -345,6 +360,7 @@
 .location-image {
   width: 100%;
   height: 100%;
+  object-fit: cover; /* 确保图片填满容器 */
 }
 
 .dialog-text {

@@ -3,9 +3,9 @@
   <!-- 1.1 用户信息部分 -->
   <view class="user-section">
     <view class="user-profile" bind:tap="ToMy">
-      <button class="avatar-btn">
+      <view class="avatar-btn">
         <image src="{{userInfo.avatar}}" mode="aspectFill" />
-      </button>
+      </view>
       <view class="name">{{userInfo.name}}</view>
     </view>
     <!-- 校区切换 -->

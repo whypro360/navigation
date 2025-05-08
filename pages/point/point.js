@@ -211,6 +211,7 @@ Page({
         uploadTask.onProgressUpdate((res) => {
           console.log(`上传进度：${res.progress}%`);
         });
+        wx.showToast({ title: '上传成功' });
       }
       await request({
         url: app.globalData.URL+'navigation/point',
