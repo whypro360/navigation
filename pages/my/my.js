@@ -1,7 +1,6 @@
 const app = getApp();
 const user = require("../../utils/user.js");
 const { request } = require("../../utils/request");
-
 Page({
   data: {
     login: {
@@ -130,22 +129,32 @@ Page({
   },
   
   async logout(){
-    const serverRes = await request({
-      url : app.globalData.URL+"user/user/logout",
-      method: "POST"
-    })
-    console.log("退出登录信息：",serverRes.data)
-    user.clearUserInfo();
-    wx.showToast({
-      title: '退出登录成功',
-      icon: 'success',
-    });
-    this.setData({
-      login:{
-        avatar: 'https://img0.baidu.com/it/u=3204281136,1911957924&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500',
-        name: '点击登录'
-      }
-    })
+
+    if(user.getUserInfo()){
+      const serverRes = await request({
+        url : app.globalData.URL+"user/user/logout",
+        method: "POST"
+      })
+      console.log("退出登录信息：",serverRes.data)
+      user.clearUserInfo();
+      wx.showToast({
+        title: '退出登录成功',
+        icon: 'success',
+      });
+      this.setData({
+        login:{
+          avatar: 'https://img0.baidu.com/it/u=3204281136,1911957924&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500',
+          name: '点击登录'
+        }
+      })      
+    }else{
+      wx.showToast({
+        title: '用户未登录，无需退出',
+        icon: 'none',
+      });
+    }
+
+
   },
   
 

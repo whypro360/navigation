@@ -2,7 +2,7 @@ const app = getApp();
 const user = require("../../utils/user.js");
 const { request } = require("../../utils/request");
 const { calculateDistance } = require("../../utils/distanceUtils");
-
+const fetchCampus = require("../../utils/getCampus");
 
 Page({
   /**
@@ -48,30 +48,47 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad() {
-    this.fetchCampusType();//获取校区类型
+  onLoad:async function() {
+    const campus = await fetchCampus.fetchCampusType();
+    this.setData({
+      campusesType:campus.map(item=>({
+        id:item.id,
+        name:item.name,
+        description:item.description
+      }))
+    })
+    wx.setStorageSync("campus",this.data.campusesType[this.data.campusIndex])
     this.fetchType(); //获取点位类型
     this.initLocal();// 获取用户位置
     if (user.isLoggedIn()) {
-      const userInfo = user.getUserInfo();
+      const{ avatar ,name, campusId}= user.getUserInfo();
+      console.log("this is a campusesType",this.data.campusesType)
+      const index = this.data.campusesType.findIndex(c => c.id == campusId);
       this.setData({
         userInfo: {
-          avatar: userInfo.avatar,
-          name: userInfo.name
-        }
+          avatar,
+          name,
+          campusId:index
+        },
+        campusIndex:index
       });
     }
   },
   onShow(){
     if (user.isLoggedIn()) {
-      const userInfo = user.getUserInfo();
+      const{ avatar ,name, campusId}= user.getUserInfo();
+      const index = this.data.campusesType.findIndex(c => c.id == campusId);
       this.setData({
         userInfo: {
-          avatar: userInfo.avatar,
-          name: userInfo.name
-        }
+          avatar,
+          name,
+          campusId:index
+        },
+        campusIndex:index
       });
     }
+    this.setData({ markers:[] })
+ 
   },
 
   // 封装公共导航逻辑
@@ -160,15 +177,8 @@ Page({
         method:"GET"
       })
       console.log("校区类型：",serverRes.data)
-      this.setData({
-        campusesType:serverRes.data.map(item=>({
-          id:item.id,
-          name:item.name,
-          description:item.description
-        }))
-      })
+
       wx.setStorageSync("campus",this.data.campusesType[this.data.campusIndex])
-      // console.log("this is a campusesType[campusIndex]:",this.data.campusesType[0])
     }catch (error) {
       console.error("获取校区类型失败", error);
       wx.showToast({
@@ -177,6 +187,7 @@ Page({
       });
     }
   },
+  //校区变化
   bindCampusChange(e) {
     const index = e.detail.value;
     this.setData({
@@ -192,9 +203,20 @@ Page({
   async fetchType() {
     try {
       const serverRes = await request({
-        url: app.globalData.URL+"navigation/pointType",
+        url: app.globalData.URL + "navigation/pointType",
         method: "GET",
       });
+    
+      // 检查返回的数据是否为空或无效
+      if (!serverRes || !serverRes.data || serverRes.data.length === 0) {
+        console.warn("返回的资源类型为空");
+        wx.showToast({
+          title: "未获取到资源类型",
+          icon: "none",
+        });
+        return; // 提前结束函数执行，避免后续代码运行
+      }
+    
       console.log("返回点位类型:", serverRes.data);
       this.setData({
         resourceTypes: serverRes.data.map(item => ({
@@ -253,10 +275,10 @@ Page({
           }
         })
       }
-  
+      const campusId = this.data.campusesType[this.data.campusIndex].id
       // 请求标记点数据
       const serverRes = await request({
-        url: app.globalData.URL+`navigation/point_pointType?Id=${typeId}`,
+        url: app.globalData.URL+`navigation/point_pointType?Id=${typeId}&&campusId=${campusId}`,
         method: "GET",
       });
   

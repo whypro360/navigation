@@ -1,6 +1,7 @@
 // pages/User/User.js
 const app = getApp();
 const { request } = require("../../utils/request");
+const fetchCampus = require("../../utils/getCampus");
 
 Page({
   /**
@@ -16,7 +17,15 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad(options) {
+  onLoad:async function() {
+    const campus = await fetchCampus.fetchCampusType();
+    this.setData({
+      campusesType:campus.map(item=>({
+        id:item.id,
+        name:item.name,
+        description:item.description
+      }))
+    })
     this.fetchUsers();
   },
 
@@ -78,15 +87,10 @@ Page({
   /**
    * 输入框内容变化事件
    */
-  onInputChange(e) {
-    const key = e.currentTarget.dataset.key;
-    const value = e.detail.value;
-
-    let updatedUser = { ...this.data.selectedUser };
-    updatedUser[key] = value;
-
+  onCampusChange(e) {
+    const index = e.detail.value;
     this.setData({
-      selectedUser: updatedUser
+      "selectedUser.campusId": index
     });
   },
   
@@ -123,26 +127,25 @@ Page({
    * 提交修改
    */
   async submitChanges() {
-    const { selectedUser } = this.data;
-
+    this.data.selectedUser.campus = this.data.campusesType[this.data.selectedUser.campusId].id;
+  
     try {
       wx.showLoading({ title: '提交中...' });
-
+  
       const res = await request({
         url: app.globalData.URL + 'admin/update_user',
         method: 'POST',
-        data: selectedUser
+        data: this.data.selectedUser 
       });
-
+  
       console.log('用户信息更新成功:', res);
       wx.hideLoading();
       wx.showToast({ title: '保存成功' });
 
-      // 可选：更新本地用户列表
       const users = [...this.data.users];
-      users[this.data.selectedIndex] = selectedUser;
+      users[this.data.selectedIndex] = this.data.selectedUser;
       this.setData({ users });
-
+  
     } catch (err) {
       console.error('提交用户信息失败:', err);
       wx.showToast({ title: '保存失败', icon: 'none' });

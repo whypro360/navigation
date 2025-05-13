@@ -54,21 +54,36 @@ Page({
       wx.hideToast();
     }
   },
-  // 输入框内容变化时触发
   handleSearchInput(e) {
-    const keyword = e.detail.value.trim();
-    this.setData({ searchKeyword: keyword });
-
+    const keyword = e.detail.value.trim().toLowerCase();
+  
     if (!keyword) {
-      this.setData({ searchResults: [] }); // 清空搜索结果
+      this.setData({ searchKeyword: '', searchResults: [] });
       return;
     }
-
-    // 模糊匹配点位信息
-    const results = this.data.allLocations.filter(location =>
-      location.name.includes(keyword) || location.description.includes(keyword)
-    );
-    this.setData({ searchResults: results });
+  
+    try {
+      const campus = wx.getStorageSync('campus');
+      
+      const regexParts = keyword.split(/(\d+)/).filter(Boolean).map(part => 
+        isNaN(part) ? part : `\\d*${part}\\d*`
+      );
+      const regexStr = regexParts.join('.*');
+      const regex = new RegExp(regexStr, 'i');
+  
+      const results = this.data.allLocations.filter(location => {
+        return location.campusId === campus.id &&
+               (regex.test(location.name) || 
+                (location.description && regex.test(location.description)));
+      });
+  
+      this.setData({
+        searchKeyword: keyword,
+        searchResults: results
+      });
+    } catch (error) {
+      console.error('Error in handleSearchInput:', error);
+    }
   },
 
   // 清空输入框

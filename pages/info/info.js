@@ -2,6 +2,7 @@
 const app = getApp();
 const user = require("../../utils/user.js");
 const { request } = require("../../utils/request");
+const fetchCampus = require("../../utils/getCampus");
 Page({
   data: {
     userInfo: {
@@ -9,81 +10,88 @@ Page({
       sex : null, 
       phone: "12345678901",
       id : 0,
-      role : "用户"
+      role : "用户",
+      campusId:0
     },
-    sexOptions: ["男", "女"]
+    sexOptions: ["男", "女"],
+    campusesType:[]
   },
 
-  onLoad(){
+  onLoad:async function(){
+    const campus = await fetchCampus.fetchCampusType();
+    this.setData({
+      campusesType:campus.map(item=>({
+        id:item.id,
+        name:item.name,
+        description:item.description
+      }))
+    })
     this.fetchUserInfo();
   },
 
   async fetchUserInfo(){
-    try{
+    try {
       wx.showLoading({ title: '加载个人信息中...' });
       const serverRes = await request({
-        url: app.globalData.URL+'user/user/getUserById',
-        method:'GET'
+        url: app.globalData.URL + 'user/user/getUserById',
+        method: 'GET'
       });
-      console.log('获取到的个人信息：',serverRes.data);
-      
-      const {openid ,name ,sex , phone, id, role:originalRole} = serverRes.data
-      // 处理角色
-      let role;
-      if (originalRole == "0") {
-        role = "用户";
-      } else {
-        role = "管理员";
-      }
-      this.setData({
-        userInfo :{
-          openid : openid,
-          name : name,
-          sex : sex ,
-          phone :phone,
-          id : id,
-          role : role
-        }
-      })
+      // console.log('获取到的个人信息：', serverRes.data);
 
-      wx.hideLoading();
+      const { openid, name, sex, id, role: originalRole, campusId } = serverRes.data;
+      const index = this.data.campusesType.findIndex(c => c.id == campusId);
+
+      const role = originalRole == "0" ? "用户" : "管理员";
+
+      this.setData({
+        userInfo: {
+          openid,
+          name,
+          sex,
+          id,
+          role,
+          campusId: index
+        }
+      });
     } catch (err) {
       console.error('获取个人信息失败:', err);
       wx.showToast({ title: '获取个人信息失败', icon: 'none' });
-      wx.hideToast();
-    }finally {
+    } finally {
       wx.hideLoading();
     }
   },
   
-  async updateUserInfo(){
-    try{
+
+
+  async updateUserInfo() {
+    try {
       wx.showLoading({ title: '提交个人信息中...' });
       await request({
-        url:app.globalData.URL+"user/user/updateUser",
-        method:"POST",
-        data:{
-          id : this.data.userInfo.id,
-          name : this.data.userInfo.name,
-          phone : this.data.userInfo.phone,
-          sex : this.data.userInfo.sex
+        url: app.globalData.URL + "user/user/updateUser",
+        method: "POST",
+        data: {
+          id: this.data.userInfo.id,
+          name: this.data.userInfo.name,
+          sex: this.data.userInfo.sex,
+          campusId: this.data.campusesType[this.data.userInfo.campusId].id
         },
       });
       wx.showToast({ title: '上传成功' });
-      const userIn = user.getUserInfo()
+
+      const { id, openid, token, avatar, role } = user.getUserInfo();
       user.setUserInfo({
-        id :userIn.id,
-        name: this.data.userInfo.name ,
-        openid:userIn.openid,
-        token:userIn.token,
-        avatar:userIn.avatar,
-        role:userIn.role
+        id,
+        name: this.data.userInfo.name,
+        openid,
+        token,
+        avatar,
+        role,
+        campusId: this.data.campusesType[this.data.userInfo.campusId].id
       });
     } catch (err) {
       console.error('提交个人信息失败:', err);
       wx.showToast({ title: '提交个人信息失败', icon: 'none' });
-      wx.hideToast();
-    }finally {
+    } finally {
       wx.hideLoading();
     }
   },
@@ -101,10 +109,11 @@ Page({
       "userInfo.sex": this.data.sexOptions[e.detail.value]
     });
   },
-  // 监听电话输入框变化
-  onPhoneChange(e) {
+  // 监听校区变化
+  onCampusChange(e) {
+    const index = e.detail.value;
     this.setData({
-      "userInfo.phone": e.detail.value
+      "userInfo.campusId": index
     });
   }
 });

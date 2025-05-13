@@ -6,7 +6,7 @@
       <text>{{userInfo.openid}}</text>
     </view>
     <view class="info-item">
-      <text>角色:</text>
+      <text>Role:</text>
       <text>{{userInfo.role}}</text>
     </view>
     <view class="info-item">
@@ -20,8 +20,10 @@
       </picker>
     </view>
     <view class="info-item">
-      <text>Phone:</text>
-      <input type="number" placeholder="请输入电话号码" value="{{userInfo.phone}}" bindinput="onPhoneChange" />
+      <text>Campus:</text>
+      <picker mode="selector"  range="{{campusesType}}" value="{{userInfo.campusId}}"  range-key="name" bindchange="onCampusChange">
+        <view class="picker">{{campusesType[userInfo.campusId].name}}</view>
+      </picker>
     </view>
     <button class="update-btn" bindtap="updateUserInfo">更新信息</button>
   </view>
