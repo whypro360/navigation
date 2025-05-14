@@ -1,8 +1,17 @@
 {
   "compileType": "miniprogram",
-  "libVersion": "trial",
+  "libVersion": "3.7.9",
   "packOptions": {
-    "ignore": [],
+    "ignore": [
+      {
+        "value": "node_modules",
+        "type": "folder"
+      },
+      {
+        "value": ".md",
+        "type": "suffix"
+      }
+    ],
     "include": []
   },
   "setting": {
@@ -12,13 +21,6 @@
     "minified": true,
     "enhance": true,
     "showShadowRootInWxmlPanel": true,
-    "packNpmManually": true,
-    "packNpmRelationList": [
-      {
-        "packageJsonPath": "./package.json",
-        "miniprogramNpmDistDir": "./miniprogram/"
-      }
-    ],
     "babelSetting": {
       "ignore": [],
       "disablePlugins": [],
@@ -28,7 +30,7 @@
   },
   "condition": {},
   "editorSetting": {
-    "tabIndent": "auto",
+    "tabIndent": "insertSpaces",
     "tabSize": 2
   },
   "appid": "wxb8d19b918f6ea4b6",

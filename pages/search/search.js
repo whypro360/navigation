@@ -55,28 +55,28 @@ Page({
     }
   },
   handleSearchInput(e) {
+    const fuzzySearch = (text, query) => {
+      const cleanedQuery = query.trim().replace(/\s+/g, ' ');
+      const regexPattern = cleanedQuery
+        .split('')
+        .map(char => char.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+        .join('.*?\\s*');
+      return new RegExp(regexPattern, 'i').test(text);
+    };
     const keyword = e.detail.value.trim().toLowerCase();
-  
     if (!keyword) {
-      this.setData({ searchKeyword: '', searchResults: [] });
+      this.setData({
+        searchKeyword: '',
+        searchResults: []
+      });
       return;
     }
-  
     try {
       const campus = wx.getStorageSync('campus');
-      
-      const regexParts = keyword.split(/(\d+)/).filter(Boolean).map(part => 
-        isNaN(part) ? part : `\\d*${part}\\d*`
+      const currentCampusLocations = this.data.allLocations.filter(
+        location => location.campusId === campus.id
       );
-      const regexStr = regexParts.join('.*');
-      const regex = new RegExp(regexStr, 'i');
-  
-      const results = this.data.allLocations.filter(location => {
-        return location.campusId === campus.id &&
-               (regex.test(location.name) || 
-                (location.description && regex.test(location.description)));
-      });
-  
+      const results = currentCampusLocations.filter(item => fuzzySearch(item.name,keyword))
       this.setData({
         searchKeyword: keyword,
         searchResults: results
@@ -85,7 +85,6 @@ Page({
       console.error('Error in handleSearchInput:', error);
     }
   },
-
   // 清空输入框
   clearSearchInput() {
     this.setData({ searchKeyword: '', searchResults: [] });
